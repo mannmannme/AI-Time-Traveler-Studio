@@ -529,42 +529,43 @@ export default function App() {
       <AnimatePresence>
         {hasKey === false && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-stone-900/90 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white p-10 rounded-[40px] max-w-lg w-full text-center shadow-2xl border border-antique-gold/10">
-              <div className="w-24 h-24 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner border border-stone-100">
-                <Sparkles className="w-12 h-12 text-stone-800" strokeWidth={1.5} />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white p-8 rounded-[40px] max-w-[440px] w-full text-center shadow-2xl border border-antique-gold/10">
+              <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-stone-100">
+                <Sparkles className="w-10 h-10 text-stone-800" strokeWidth={1.5} />
               </div>
-              <h2 className="text-3xl font-display font-bold text-sepia mb-6">歡迎來到時光肖像館</h2>
-              <div className="space-y-2 mb-10">
-                <p className="text-sepia/80 font-elegant italic text-xl leading-relaxed">
+              <h2 className="text-2xl font-display font-bold text-sepia mb-5">歡迎來到時光肖像館</h2>
+              <div className="space-y-2 mb-8">
+                <p className="text-sepia/80 font-elegant italic text-lg leading-relaxed">
                   為了生成高品質的專業級肖像，我們需要您提供一個具備付費功能的 Google Cloud 專案 API 金鑰。
                 </p>
-                <p className="text-sepia/40 text-sm font-sans italic">
+                <p className="text-sepia/40 text-[13px] font-sans italic">
                   (To generate high-quality professional portraits, please provide an API key from a paid Google Cloud project.)
                 </p>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <input 
                   type="password" 
                   value={manualApiKey} 
                   onChange={(e) => setManualApiKey(e.target.value)} 
                   placeholder="輸入您的 API 金鑰 (Enter API Key)" 
-                  className="w-full py-4 px-6 bg-stone-50 border border-stone-200 rounded-2xl text-base focus:ring-2 focus:ring-antique-gold/20 outline-none transition-all text-center font-bold" 
+                  className="w-full py-3.5 px-6 bg-stone-50 border border-stone-200 rounded-2xl text-sm focus:ring-2 focus:ring-antique-gold/20 outline-none transition-all text-center font-bold" 
                 />
                 <button 
                   onClick={handleSaveManualKey} 
-                  className="w-full py-5 bg-vintage-red text-white rounded-2xl font-bold text-xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-gradient-to-b from-[#A01A1A] to-[#800000] text-white rounded-2xl font-bold text-lg shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                 >
                   <span>儲存並繼續 (Save and Continue)</span>
                 </button>
-                <div className="pt-2">
+                <div className="pt-1 text-[11px] text-sepia/40">
+                  瞭解更多關於{" "}
                   <a 
                     href="https://ai.google.dev/gemini-api/docs/billing" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-xs text-sepia/40 hover:text-sepia/60 underline underline-offset-4 decoration-sepia/20 transition-colors"
+                    className="hover:text-sepia/60 underline underline-offset-4 decoration-sepia/20 transition-colors"
                   >
-                    了解更多關於 計費說明
+                    計費說明
                   </a>
                 </div>
               </div>
