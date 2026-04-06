@@ -12,18 +12,14 @@ import {
   Camera, 
   Loader2, 
   Image as ImageIcon,
-  ChevronRight,
   RefreshCw,
-  Clock,
   Sparkles,
   Grid,
   Edit3,
   X,
   Eraser,
-  Palette,
   Undo2,
-  Maximize,
-  ZoomIn
+  Maximize
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -50,32 +46,32 @@ const STYLES: StyleConfig[] = [
   {
     name: "文藝復興 (Renaissance Majesty)",
     nameEn: "Renaissance Majesty",
-    prompt: "Generate a Renaissance-inspired portrait of the same person. Preserve the subject’s facial features, identity, gender, and ethnicity. Ensure the subject's age is preserved or slightly younger than the reference image, strictly avoiding any aging effects. Depict the subject as a noble figure wearing refined and elegant 16th-century European attire with tasteful fabric details. Styling: For men, include period-appropriate headwear like elegant velvet caps or berets, and a doublet with slashed sleeves. For women, maintain a lightweight and graceful aesthetic with intricate braided hair crowns, subtle jeweled accents, or delicate hair ornaments, strictly avoiding heavy or fully-covering hats to preserve an airy and elegant feel. Include high lace ruff collars where appropriate. Makeup: Natural Renaissance-style, matte skin, subtle earthy tones, defined but natural features, avoiding modern glossy or heavy cosmetics. The styling must be historically authentic and sophisticated, avoiding an overly cluttered or exaggerated look. Neutral facial expression, strictly no smiling, maintaining a serene and quiet classical art atmosphere. Style: Hyper-realistic but timeless, inspired by Renaissance portrait composition, soft chiaroscuro lighting, subtle and refined oil painting texture (soft sfumato finish), natural skin texture, no glossy fashion lighting, no heavy oil paint effect. Background: Deep, dark neutral backdrop with subtle depth. Composition: Tight half-body portrait where the subject appears large and prominent, filling at least 70% of the vertical frame. Three-quarter view or slight side profile, calm and dignified posture, 3:4 vertical aspect ratio. Mood: Timeless, dignified, museum-quality realism. High resolution, refined detail, cinematic but restrained. Avoid modern fashion photography aesthetics and contemporary makeup. Strictly forbid all modern items and accessories, especially smartwatches, digital devices, or contemporary jewelry. Every element must be historically accurate to the 16th century."
+    prompt: "Generate a Renaissance-inspired portrait of the same person. Preserve the subject’s facial features, identity, gender, and ethnicity. Preserve the subject's original age from the reference image, but ensure they are depicted in their most elegant, fresh, and vibrant state for that age. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). Depict the subject as a noble figure wearing refined and elegant 16th-century European attire with tasteful fabric details. Styling: For men, include period-appropriate headwear like elegant velvet caps or berets, and a doublet with slashed sleeves. For women, maintain a lightweight and graceful aesthetic with intricate braided hair crowns, subtle jeweled accents, or delicate hair ornaments, strictly avoiding heavy or fully-covering hats to preserve an airy and elegant feel. Include high lace ruff collars where appropriate. Makeup: Natural Renaissance-style, matte skin, subtle earthy tones, defined but natural features, avoiding modern glossy or heavy cosmetics. The styling must be historically authentic and sophisticated, avoiding an overly cluttered or exaggerated look. Neutral facial expression, strictly no smiling, maintaining a serene and quiet classical art atmosphere. Style: Hyper-realistic but timeless, inspired by Renaissance portrait composition, soft chiaroscuro lighting, subtle and refined oil painting texture (soft sfumato finish), natural skin texture, no glossy fashion lighting, no heavy oil paint effect. Background: Deep, dark neutral backdrop with subtle depth. Composition: Tight half-body portrait where the subject appears very large and prominent, filling at least 85% of the vertical frame. Three-quarter view or slight side profile, calm and dignified posture, 3:4 vertical aspect ratio. Mood: Timeless, dignified, museum-quality realism. High resolution, refined detail, cinematic but restrained. Avoid modern fashion photography aesthetics and contemporary makeup. Strictly forbid all modern items and accessories, especially smartwatches, digital devices, or contemporary jewelry. Every element must be historically accurate to the 16th century."
   },
   {
     name: "大正浪漫 (Taisho Romance)",
     nameEn: "Taisho Romance",
-    prompt: "A Taisho Roman–inspired portrait. Preserve the subject’s facial features, identity, gender, and ethnicity. Depict the subject in a dignified posture. Styling: For women, wearing elegant Taisho-era attire: a lace-collared blouse with a high-waisted striped hakama, or a patterned kimono with a high-collared blouse. For men, wearing a classic Taisho-era gakuran (student uniform), a formal kimono with haori and hakama, or a sharp Zhongshan suit (Sun Yat-sen suit) which was popular in this era, potentially with a retro flat cap or bowler hat. Style: Early 20th-century studio photography aesthetic, warm sepia-toned color palette, muted vintage tones, soft diffused lighting. Natural skin texture. Background: Traditional Japanese interior with shoji screens, vintage wooden furniture, and an antique clock. Accessories: The subject holds a classic folding fan or an open vintage book. Hair: Natural hairstyle with a simple vintage ribbon or pearl hairclip. Composition: Tight half-body portrait, subject prominent (70% of frame). 3:4 vertical aspect ratio. Mood: Romantic, nostalgic, intellectual. Output: High resolution, ultra-detailed, museum-quality realism. Avoid anime, cosplay, modern fashion lighting, and heavy makeup. Strictly forbid all modern items (smartwatches, smartphones). Historically accurate to the Taisho era."
+    prompt: "A Taisho Roman–inspired portrait. Preserve the subject’s facial features, identity, gender, and ethnicity. Depict the subject in a dignified posture. Styling: For women, wearing elegant Taisho-era attire: a lace-collared blouse with a high-waisted striped hakama, or a patterned kimono with a high-collared blouse. For men, wearing a classic Taisho-era gakuran (student uniform), a formal kimono with haori and hakama, or a sharp Zhongshan suit (Sun Yat-sen suit) which was popular in this era, potentially with a retro flat cap or bowler hat. Style: Early 20th-century studio photography aesthetic, warm sepia-toned color palette, muted vintage tones, soft diffused lighting. Natural skin texture. Background: Traditional Japanese interior with shoji screens, vintage wooden furniture, and an antique clock. Accessories: The subject holds a classic folding fan or an open vintage book. Hair: Elegant Taisho-era hairstyle, such as soft waves or a refined updo with a simple vintage ribbon or pearl hairclip. CRITICAL: Depict the subject as at least 10 years younger than they appear in the reference image, ensuring they look fresh, vibrant, and youthful. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). Radiate a fresh, vibrant, and sophisticated Taisho-era charm. Composition: Tight half-body portrait, subject very prominent, filling at least 85% of the frame. 3:4 vertical aspect ratio. Mood: Romantic, nostalgic, intellectual. CRITICAL: Ensure the subject maintains a slim and elegant silhouette; the kimono or hakama should be tailored to look refined and flattering, strictly avoiding any bloated or heavy appearance. Output: High resolution, ultra-detailed, museum-quality realism. Avoid anime, cosplay, modern fashion lighting, and heavy makeup. Strictly forbid all modern items (smartwatches, smartphones). Historically accurate to the Taisho era."
   },
   {
     name: "好萊塢默片 (Silent Glamour)",
     nameEn: "Silent Glamour",
-    prompt: "Generate a glamorous late-1920s Hollywood studio portrait inspired by the golden age of silent cinema (1927–1929). Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Photography Style: Classic black and white film photography, high-contrast yet flattering lighting, soft cinematic chiaroscuro, directional studio key light, smooth tonal transitions, subtle natural film grain, no modern digital sharpness, no HDR effect. Hair & Styling: For women, authentic 1920s finger waves or soft Marcel waves. Elegant beaded flapper-style evening gown or silk evening dress. Optional opera gloves (black, ivory, or none). Classic pearl necklace or refined Art Deco jewelry. For men, a sharp 1920s tuxedo or a three-piece suit with a crisp white shirt, silk tie, and slicked-back hair in the style of a silent film star. Expression: Gentle closed-lip smile. Lips softly curved but teeth not visible. Warm yet poised gaze. Elegant and graceful presence. Dramatic but beautiful — not stern, not severe. Background: Dark velvet drapery or geometric Art Deco backdrop. Soft vignette edges. Authentic 1920s Hollywood studio ambiance. Composition: Upper-body portrait. Vertical 3:4 ratio. Centered cinematic framing. Mood: Glamorous, dramatic, refined, timeless, beautiful. Avoid wide smile, visible teeth, open mouth smile, exaggerated grin, harsh expression, overly modern fashion, HDR look, fashion magazine style lighting."
+    prompt: "Generate a glamorous late-1920s Hollywood studio portrait inspired by the golden age of silent cinema (1927–1929). Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Preserve the subject's original age from the reference image, but ensure they are depicted in their most elegant, fresh, and vibrant state for that age. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). Photography Style: Classic black and white film photography, high-contrast yet flattering lighting, soft cinematic chiaroscuro, directional studio key light, smooth tonal transitions, subtle natural film grain, no modern digital sharpness, no HDR effect. Hair & Styling: For women, authentic 1920s finger waves or soft Marcel waves. Elegant beaded flapper-style evening gown or silk evening dress. Optional opera gloves (black, ivory, or none). Classic pearl necklace or refined Art Deco jewelry. For men, a sharp 1920s tuxedo or a three-piece suit with a crisp white shirt, silk tie, and slicked-back hair in the style of a silent film star. Expression: Gentle closed-lip smile. Lips softly curved but teeth not visible. Warm yet poised gaze. Elegant and graceful presence. Dramatic but beautiful — not stern, not severe. Background: Dark velvet drapery or geometric Art Deco backdrop. Soft vignette edges. Authentic 1920s Hollywood studio ambiance. Composition: Tight upper-body portrait, subject filling at least 85% of the frame. Vertical 3:4 ratio. Centered cinematic framing. Mood: Glamorous, dramatic, refined, timeless, beautiful. Avoid wide smile, visible teeth, open mouth smile, exaggerated grin, harsh expression, overly modern fashion, HDR look, fashion magazine style lighting."
   },
   {
     name: "臺灣風華年代 (Formosa Radiance)",
     nameEn: "Taiwan Golden Era",
-    prompt: "Generate a portrait inspired by Taiwan in the 1970s. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Depict the subject as a confident and elegant urban figure from Taiwan’s golden era. Styling: For women, dressed in stylish 1970s attire such as a geometric-pattern blouse, high-waisted trousers, a retro dress, or flared pants. For men, a classic 1970s safari jacket, a polo shirt, or a retro patterned shirt with flared trousers and sideburns typical of the era. Style: Historical realism with a cinematic and nostalgic atmosphere, photorealistic yet timeless, inspired by 1970s Taiwanese films and vintage studio photography. Warm, natural lighting with soft shadows. Muted earthy tones such as caramel brown, mustard yellow, olive green, and brick red. Natural makeup and hairstyle typical of the era. Subtle film grain for authenticity. No exaggerated retro filters or sepia effects. No modern fashion aesthetics. Background: A nostalgic Taiwanese streetscape with traditional shop signs and arcade buildings, or a vintage photo studio with a warm gradient backdrop. Use a shallow depth of field to naturally blur the background elements, especially the shop signs and signboards, so that any text on them is softly out of focus and not clearly legible. Include authentic cultural elements such as scooters or old signboards. Accessories: A leather handbag or classic wristwatch. Composition: Tight half-body framing where the subject occupies the vast majority of the frame. The subject should be shown from the waist up, with the head and upper torso dominating the composition. The subject must appear large and prominent, filling at least 70% of the vertical space. Elegant and confident posture, centered composition, vertical aspect ratio of 3:4. Mood: Warm, nostalgic, and refined—capturing the prosperity and cultural charm of Taiwan in the 1970s. Output: High resolution, ultra-detailed, photorealistic, cinematic quality. Avoid modern buildings, contemporary fashion, neon cyberpunk elements, heavy sepia filters, exaggerated retro styling, anime aesthetics, and futuristic objects. Add subtle 1970s film grain and warm Kodak color tones. Strictly forbid all modern items and accessories, especially smartwatches, smartphones, or digital devices. Every element must be historically accurate to the 1970s. Ensure background text is blurred and illegible."
+    prompt: "Generate a portrait inspired by Taiwan in the 1970s. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Depict the subject as a confident and elegant urban figure from Taiwan’s golden era. Styling: For women, dressed in stylish 1970s attire such as a geometric-pattern blouse, high-waisted trousers, a retro dress, or flared pants. For men, a classic 1970s safari jacket, a polo shirt, or a retro patterned shirt with flared trousers and sideburns typical of the era. Style: Historical realism with a cinematic and nostalgic atmosphere, photorealistic yet timeless, inspired by 1970s Taiwanese films and vintage studio photography. Warm, natural lighting with soft shadows. Muted earthy tones such as caramel brown, mustard yellow, olive green, and brick red. CRITICAL: Depict the subject as at least 10 years younger than they appear in the reference image, ensuring they look fresh, vibrant, and youthful. Strictly avoid any styling that looks aged or overly mature. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). Hair: Natural, fresh, and sophisticated 1970s hairstyle. For women, prioritize youthful and vibrant hairstyles (e.g., soft long waves, a high ponytail, or a fresh layered cut) to avoid any aged appearance. Makeup: Natural, fresh, and sophisticated makeup typical of the 1970s. Subtle film grain for authenticity. No exaggerated retro filters or sepia effects. No modern fashion aesthetics. Background: A nostalgic Taiwanese streetscape with a few traditional shop signs and arcade buildings, or a vintage photo studio with a warm gradient backdrop. CRITICAL: The streetscape must be empty of other people; strictly no pedestrians or bystanders in the background. Keep the background clean and avoid a cluttered row of signs; only a few authentic signs are needed for atmosphere. Use a shallow depth of field to naturally blur the background elements, especially the shop signs and signboards, so that any text on them is softly out of focus and not clearly legible. Include authentic cultural elements such as scooters or old signboards. Accessories: A leather handbag or classic wristwatch. Composition: CRITICAL: This MUST be a tight half-body portrait. The subject MUST appear very large and prominent, filling at least 85-90% of the vertical space. The subject should be shown from the waist up, with the head and upper torso dominating the frame. Do not let the background streetscape overwhelm the subject; the person is the absolute focus. Elegant and confident posture, centered composition, vertical aspect ratio of 3:4. Mood: Warm, nostalgic, and refined—capturing the prosperity and cultural charm of Taiwan in the 1970s. Output: High resolution, ultra-detailed, photorealistic, cinematic quality. Avoid modern buildings, contemporary fashion, neon cyberpunk elements, heavy sepia filters, exaggerated retro styling, anime aesthetics, and futuristic objects. Add subtle 1970s film grain and warm Kodak color tones. Strictly forbid all modern items and accessories, especially smartwatches, smartphones, or digital devices. Every element must be historically accurate to the 1970s. Ensure background text is blurred and illegible."
   },
   {
     name: "當代時尚 (Contemporary Fashion)",
     nameEn: "Contemporary Fashion",
-    prompt: "Generate a contemporary high-fashion portrait with a luxury brand campaign aesthetic. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Style: Contemporary Luxury Fashion — Timeless Elegance, Modern Prestige. Modern luxury brand ambassador presence. Refined, confident, quietly powerful. The subject should feel like the face of a premium fashion house or international luxury campaign. subtle cinematic depth, quiet star aura, international luxury advertisement tone Wardrobe: High-fashion luxury styling with couture-inspired details. For women, options such as: 1) Designer evening gown or modern minimalist couture dress; 2) Sharp tailored luxury pantsuit or sophisticated high-waisted trousers with a structured designer top; 3) Elegant eveningwear with refined draping or subtle statement silhouettes. For men, sharp tailored designer suits, premium luxury knitwear, or sophisticated high-fashion outerwear with clean lines. Fabrics may include silk, satin, velvet, chiffon, or premium textured materials. Avoid standard corporate suits or plain business blazers. Avoid conservative office styling. Color palette: Champagne, ivory, deep black, midnight navy, metallic accents, soft gold, rich neutral tones. Details: Subtle embroidery, refined embellishment, couture-inspired trims, elegant draping, layered luxury jewelry. Outfit should feel like a luxury campaign or red-carpet editorial moment. The outfit should feel like a luxury fashion house runway or premium international brand advertisement. Hair: Modern elegant styling with natural sophistication. Makeup: Luminous natural skin with a soft editorial glow. Light refined eye definition. Soft neutral or rose-toned lips. Fresh, modern, elegant. No heavy eyeliner, no dramatic contouring. Lighting: Soft diffused luxury lighting. Dimensional but clean. Subtle highlights and gentle shadow depth. High-end campaign quality. Expression: Confident, composed. Gentle closed-lip smile. No visible teeth. Magnetic yet understated presence. Background: Minimalist upscale interior, architectural modern space, or softly blurred luxury environment. Clean and elegant. Composition: Prominent half-body portrait. The subject should be large and occupy a significant portion of the frame, ensuring a clear and detailed view of the person. Avoid small or distant subject placement. Editorial framing. Vertical 3:4 ratio. Magazine-quality finish. Mood: Luxury brand campaign. Understated prestige. Modern icon energy. Image Quality: Ultra high resolution. Realistic skin tones. Detailed fabric and jewelry texture. Premium editorial polish. Important: No text, no typography, no logos, no watermarks."
+    prompt: "Generate a contemporary high-fashion portrait with a luxury brand campaign aesthetic. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Preserve the subject's original age from the reference image, but ensure they are depicted in their most elegant, fresh, and vibrant state for that age. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). Style: Contemporary Luxury Fashion — Timeless Elegance, Modern Prestige. Modern luxury brand ambassador presence. Refined, confident, quietly powerful. The subject should feel like the face of a premium fashion house or international luxury campaign. subtle cinematic depth, quiet star aura, international luxury advertisement tone Wardrobe: High-fashion luxury styling with couture-inspired details. For women, options such as: 1) Designer evening gown or modern minimalist couture dress; 2) Sharp tailored luxury pantsuit or sophisticated high-waisted trousers with a structured designer top; 3) Elegant eveningwear with refined draping or subtle statement silhouettes. For men, sharp tailored designer suits, premium luxury knitwear, or sophisticated high-fashion outerwear with clean lines. Fabrics may include silk, satin, velvet, chiffon, or premium textured materials. Avoid standard corporate suits or plain business blazers. Avoid conservative office styling. Color palette: Champagne, ivory, deep black, midnight navy, metallic accents, soft gold, rich neutral tones. Details: Subtle embroidery, refined embellishment, couture-inspired trims, elegant draping, layered luxury jewelry. Outfit should feel like a luxury campaign or red-carpet editorial moment. The outfit should feel like a luxury fashion house runway or premium international brand advertisement. Hair: Modern elegant styling with natural sophistication. Makeup: Extremely natural, 'no-makeup' look with luminous skin and a soft editorial glow. Very light refined eye definition. Soft neutral or rose-toned lips. Fresh, sophisticated, and modern elegance. Strictly avoid heavy eyeliner, dramatic contouring, dark eyeshadow, or any makeup that looks thick or aged. Lighting: Soft diffused luxury lighting. Dimensional but clean. Subtle highlights and gentle shadow depth. High-end campaign quality. Expression: Confident, composed. Gentle closed-lip smile. No visible teeth. Magnetic yet understated presence. Background: Minimalist upscale interior, architectural modern space, or softly blurred luxury environment. Clean and elegant. Composition: Prominent half-body portrait. The subject should be very large and occupy at least 85% of the vertical frame, ensuring a clear and detailed view of the person. Avoid small or distant subject placement. Editorial framing. Vertical 3:4 ratio. Magazine-quality finish. Mood: Luxury brand campaign. Understated prestige. Modern icon energy. Image Quality: Ultra high resolution. Realistic skin tones. Detailed fabric and jewelry texture. Premium editorial polish. Important: No text, no typography, no logos, no watermarks."
   },
   {
     name: "未來紀元 (Future Epoch)",
     nameEn: "Future Epoch",
-    prompt: "The Age of Intelligent Elegance. Futuristic portrait of a refined individual within an advanced architectural environment overlooking a luminous intelligent city. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Structured sculptural couture with clean geometric lines and high-tech refined fabric. Minimalist futuristic tailoring in pearl white, graphite black, deep navy, or silver-grey. The attire should be elegant and human-centered, suitable for both men and women. Subtle metallic accents integrated into the design. No armor, no heavy embellishment. Expansive intelligent architectural space with soft ambient blue-white glow. Clean futuristic interior, panoramic depth, subtle holographic atmosphere integrated into the environment. Technology should feel natural and seamlessly embedded in the space. Calm authoritative presence, upright confident posture, composed and visionary expression. Soft cool lighting with cinematic clarity. Luxury future aesthetic, human-centered civilization, sophisticated, refined, elevated. No cyberpunk, no robotic implants, no mechanical limbs, no aggressive neon, no dystopian elements. Vertical aspect ratio 3:4."
+    prompt: "The Age of Intelligent Elegance. Futuristic portrait of a refined individual within an advanced architectural environment overlooking a luminous intelligent city. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Preserve the subject's original age from the reference image, but ensure they are depicted in their most elegant, fresh, and vibrant state for that age. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). Structured sculptural couture with clean geometric lines and high-tech refined fabric. Minimalist futuristic tailoring in pearl white, graphite black, deep navy, or silver-grey. The attire should be elegant and human-centered, suitable for both men and women. Subtle metallic accents integrated into the design. No armor, no heavy embellishment. Expansive intelligent architectural space with soft ambient blue-white glow. Clean futuristic interior, panoramic depth, subtle holographic atmosphere integrated into the environment. Technology should feel natural and seamlessly embedded in the space. Calm authoritative presence, upright confident posture, composed and visionary expression. Soft cool lighting with cinematic clarity. Luxury future aesthetic, human-centered civilization, sophisticated, refined, elevated. No cyberpunk, no robotic implants, no mechanical limbs, no aggressive neon, no dystopian elements. Vertical aspect ratio 3:4."
   }
 ];
 
@@ -113,6 +109,36 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // --- Helper: Base64 to Blob URL ---
+  const base64ToBlobUrl = (base64: string, mimeType: string): string => {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
+    return URL.createObjectURL(blob);
+  };
+
+  // --- Helper: Blob URL to Base64 ---
+  const blobUrlToBase64 = async (blobUrl: string): Promise<{ base64: string, mimeType: string }> => {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        const base64 = result.split(',')[1];
+        const mimeType = result.split(',')[0].split(':')[1].split(';')[0];
+        resolve({ base64, mimeType });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  // --- Helper: Resize Image ---
   const resizeImage = (base64: string, maxWidth = 1024, maxHeight = 1024): Promise<string> => {
     return new Promise((resolve) => {
       const img = new Image();
@@ -150,125 +176,250 @@ export default function App() {
   }, []);
 
   const handleSelectKey = async () => {
-    if (window.aistudio) { await window.aistudio.openSelectKey(); setHasKey(true); }
+    if (window.aistudio) {
+      await window.aistudio.openSelectKey();
+      setHasKey(true);
+    }
   };
+
+  const prevPortraitsRef = useRef<GeneratedPortrait[]>([]);
+  React.useEffect(() => {
+    const prevUrls = new Set<string>(prevPortraitsRef.current.map(p => p.url));
+    const currentUrls = new Set<string>(portraits.map(p => p.url));
+    
+    prevUrls.forEach((url: string) => {
+      if (!currentUrls.has(url) && url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    });
+    
+    prevPortraitsRef.current = portraits;
+  }, [portraits]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => { setSourceImage(event.target?.result as string); setPortraits([]); setError(null); };
+      reader.onload = (event) => {
+        setSourceImage(event.target?.result as string);
+        setPortraits([]);
+        setError(null);
+      };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSaveManualKey = () => {
-    if (manualApiKey.trim()) { localStorage.setItem('gemini_api_key', manualApiKey.trim()); setHasKey(true); setShowKeyInput(false); }
+    if (manualApiKey.trim()) {
+      localStorage.setItem('gemini_api_key', manualApiKey.trim());
+      setHasKey(true);
+      setShowKeyInput(false);
+    }
   };
 
   const generatePortraits = async () => {
     if (!sourceImage) return;
-    setIsGenerating(true); setPortraits([]); setProgress(0); setError(null);
+    setIsGenerating(true);
+    setPortraits([]);
+    setProgress(0);
+    setError(null);
+
     const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || manualApiKey;
-    if (!apiKey) { setError("找不到 API 金鑰，請重新選擇。"); setHasKey(false); setIsGenerating(false); return; }
+    if (!apiKey) {
+      setError("找不到 API 金鑰，請重新選擇。");
+      setHasKey(false);
+      setIsGenerating(false);
+      return;
+    }
+
     const ai = new GoogleGenAI({ apiKey });
     const model = "gemini-3.1-flash-image-preview";
+    
     const resizedImage = await resizeImage(sourceImage);
     const base64Data = resizedImage.split(',')[1];
     const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
+
     const stylesToGenerate = STYLES.filter(s => selectedStyleIds.includes(s.nameEn));
     const totalStyles = stylesToGenerate.length;
     let completedCount = 0;
+
     try {
       for (const style of stylesToGenerate) {
-        let attempts = 0; const maxAttempts = 2; let success = false;
+        let attempts = 0;
+        const maxAttempts = 2;
+        let success = false;
+
         while (attempts < maxAttempts && !success) {
           try {
             const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Taiwan Golden Era"].includes(style.nameEn);
+            
             const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
             ${additionalDesc ? `Additional user request: ${additionalDesc}` : ''}
+            CRITICAL: Aesthetic beauty is the top priority. The output must be visually stunning and elegant.
             CRITICAL: Preserve the person's exact facial identity, features, expression, and ethnicity. 
             CRITICAL: Strictly maintain the person's original gender (${gender}). If the photo is male, the output MUST be male. If female, the output MUST be female.
-            CRITICAL: The subject MUST NOT look older than the reference image. Strictly avoid any aging effects.
-            CRITICAL: The subject MUST NOT look heavier or thicker than the reference image. Maintain the person's original body type.
-            ${isHistorical ? `CRITICAL: Remove all modern accessories from the source image (e.g., watches, fitness trackers, modern jewelry) to ensure strict historical authenticity.` : ''}
-            Output a high-resolution, photorealistic portrait. Aspect ratio: 3:4.`;
+            CRITICAL: Preserve the subject's original age from the reference image, but ensure they are depicted in their most elegant, fresh, and vibrant state for that age. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). The goal is a sophisticated and aesthetically beautiful portrait.
+            CRITICAL: The subject MUST NOT look heavier or thicker than the reference image. Maintain the person's original body type, physique, and overall weight. If the reference image is a headshot, infer a proportionate and elegant body type consistent with the subject's facial features and gender. Strictly avoid any bloating or distortion of the subject's figure.
+            ${isHistorical ? `CRITICAL: Remove all modern accessories from the source image (e.g., watches, fitness trackers, modern jewelry, belts, modern glasses) to ensure strict historical authenticity for the chosen era.` : 'Maintain the aesthetic and stylistic authenticity of the chosen style.'}
+            Output a high-resolution, photorealistic portrait suitable for professional and commercial use. 
+            Aspect ratio: 3:4 (Portrait).`;
+
             const response = await ai.models.generateContent({
               model: model,
-              contents: { parts: [{ inlineData: { data: base64Data, mimeType: mimeType } }, { text: promptText }] },
-              config: { imageConfig: { aspectRatio: "3:4", imageSize: resolution as any } }
+              contents: {
+                parts: [
+                  { inlineData: { data: base64Data, mimeType: mimeType } },
+                  { text: promptText }
+                ]
+              },
+              config: {
+                imageConfig: {
+                  aspectRatio: "3:4", 
+                  imageSize: resolution as any
+                }
+              }
             });
+
             let imageUrl = "";
             const parts = response.candidates?.[0]?.content?.parts || [];
-            for (const part of parts) { if (part.inlineData) { imageUrl = `data:image/png;base64,${part.inlineData.data}`; break; } }
+            for (const part of parts) {
+              if (part.inlineData) {
+                imageUrl = base64ToBlobUrl(part.inlineData.data, 'image/png');
+                break;
+              }
+            }
+
             if (imageUrl) {
-              const portrait: GeneratedPortrait = { id: Math.random().toString(36).substr(2, 9), style: style.name, styleEn: style.nameEn, url: imageUrl, prompt: style.prompt, caption: "" };
-              setPortraits(prev => [...prev, portrait]); success = true;
-            } else { success = true; }
+              const portrait: GeneratedPortrait = {
+                id: Math.random().toString(36).substr(2, 9),
+                style: style.name,
+                styleEn: style.nameEn,
+                url: imageUrl,
+                prompt: style.prompt,
+                caption: ""
+              };
+              setPortraits(prev => [...prev, portrait]);
+              success = true;
+            } else {
+              success = true;
+            }
           } catch (err: any) {
             attempts++;
-            if (attempts < maxAttempts && (err.message?.includes("500") || err.status === 500)) { await new Promise(resolve => setTimeout(resolve, 2000)); }
-            else { success = true; }
+            if (attempts < maxAttempts && (err.message?.includes("500") || err.status === 500)) {
+              await new Promise(resolve => setTimeout(resolve, 2000));
+            } else {
+              success = true;
+            }
           }
         }
-        completedCount++; setProgress((completedCount / totalStyles) * 100);
+        completedCount++;
+        setProgress((completedCount / totalStyles) * 100);
       }
     } catch (err: any) {
       setError(err.message || "生成過程中發生錯誤。");
-    } finally { setIsGenerating(false); }
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const refinePortrait = async () => {
     if (!refiningPortraitId || !refinementPrompt) return;
     const targetPortrait = portraits.find(p => p.id === refiningPortraitId);
     if (!targetPortrait) return;
-    setIsGenerating(true); setProgress(0); setError(null);
-    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-    if (!apiKey) { setError("找不到 API 金鑰。"); setHasKey(false); setIsGenerating(false); return; }
+
+    setIsGenerating(true);
+    setProgress(0);
+    setError(null);
+
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || manualApiKey;
+    if (!apiKey) {
+      setError("找不到 API 金鑰。");
+      setHasKey(false);
+      setIsGenerating(false);
+      return;
+    }
+
     const ai = new GoogleGenAI({ apiKey });
     const model = "gemini-3.1-flash-image-preview";
-    const base64Data = targetPortrait.url.split(',')[1];
-    const mimeType = targetPortrait.url.split(',')[0].split(':')[1].split(';')[0];
-    let markupBase64 = null;
-    if (canvasRef.current && paths.length > 0) { markupBase64 = canvasRef.current.toDataURL('image/png').split(',')[1]; }
+    
     try {
+      const { base64: base64Data, mimeType } = await blobUrlToBase64(targetPortrait.url);
+
+      let markupBase64 = null;
+      if (canvasRef.current && paths.length > 0) {
+        markupBase64 = canvasRef.current.toDataURL('image/png').split(',')[1];
+      }
+
       const parts: any[] = [{ inlineData: { data: base64Data, mimeType: mimeType } }];
-      if (markupBase64) { parts.push({ inlineData: { data: markupBase64, mimeType: 'image/png' } }); }
-      parts.push({ text: `Refine this portrait: ${refinementPrompt}. CRITICAL: Preserve facial identity. No aging or weight gain. Aspect ratio: 3:4.` });
+      if (markupBase64) {
+        parts.push({ inlineData: { data: markupBase64, mimeType: 'image/png' } });
+      }
+
+      parts.push({
+        text: `Refine this portrait based on the following request: ${refinementPrompt}. 
+        Maintain the exact same style (${targetPortrait.styleEn}), background, and composition of the original image. 
+        Only modify the specific elements requested. 
+        CRITICAL: Aesthetic beauty and elegance are the top priorities.
+        CRITICAL: Preserve the person's exact facial identity, features, and expression.
+        CRITICAL: The subject MUST NOT look older or heavier than the reference image. Strictly avoid any aging, weight gain, or bloating effects. Maintain the original body shape.
+        Output a high-resolution, photorealistic portrait. 
+        Aspect ratio: 3:4 (Portrait).`,
+      });
+
       const response = await ai.models.generateContent({
         model: model,
         contents: { parts: parts },
-        config: { imageConfig: { aspectRatio: "3:4", imageSize: resolution as any } }
+        config: {
+          imageConfig: {
+            aspectRatio: "3:4", 
+            imageSize: resolution as any
+          }
+        }
       });
+
       let imageUrl = "";
       const responseParts = response.candidates?.[0]?.content?.parts || [];
-      for (const part of responseParts) { if (part.inlineData) { imageUrl = `data:image/png;base64,${part.inlineData.data}`; break; } }
+      for (const part of responseParts) {
+        if (part.inlineData) {
+          imageUrl = base64ToBlobUrl(part.inlineData.data, 'image/png');
+          break;
+        }
+      }
+
       if (imageUrl) {
         setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, url: imageUrl } : p));
-        setRefiningPortraitId(null); setRefinementPrompt('');
+        setRefiningPortraitId(null);
+        setRefinementPrompt('');
       }
-    } catch (err: any) { setError(err.message || "修改過程中發生錯誤。"); }
-    finally { setIsGenerating(false); }
+    } catch (err: any) {
+      setError(err.message || "修改過程中發生錯誤。");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
     if (!refiningPortraitId || isGenerating) return;
     setIsDrawing(true);
-    const canvas = canvasRef.current; if (!canvas) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
     const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
-    const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
     setPaths(prev => [...prev, { points: [{ x: x * scaleX, y: y * scaleY }], color: brushColor }]);
   };
 
   const draw = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDrawing || !refiningPortraitId || isGenerating) return;
-    const canvas = canvasRef.current; if (!canvas) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = ('touches' in e) ? e.touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
     const y = ('touches' in e) ? e.touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
-    const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
     setPaths(prev => {
       if (prev.length === 0) return prev;
       const lastPath = prev[prev.length - 1];
@@ -280,49 +431,94 @@ export default function App() {
 
   const stopDrawing = () => setIsDrawing(false);
 
+  const undoLastPath = () => {
+    setPaths(prev => prev.slice(0, -1));
+  };
+
+  const clearCanvas = () => {
+    setPaths([]);
+  };
+
   React.useEffect(() => {
-    const canvas = canvasRef.current; if (!canvas) return;
-    const ctx = canvas.getContext('2d'); if (!ctx) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.lineWidth = 10;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 10;
     paths.forEach(path => {
-      ctx.strokeStyle = path.color; ctx.beginPath();
-      path.points.forEach((point, i) => { if (i === 0) ctx.moveTo(point.x, point.y); else ctx.lineTo(point.x, point.y); });
+      ctx.strokeStyle = path.color;
+      ctx.beginPath();
+      path.points.forEach((point, i) => {
+        if (i === 0) ctx.moveTo(point.x, point.y);
+        else ctx.lineTo(point.x, point.y);
+      });
       ctx.stroke();
     });
   }, [paths]);
 
   const downloadImage = (url: string, filename: string) => {
-    const link = document.createElement('a'); link.href = url; link.download = filename;
-    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const generateCollage = useCallback(async () => {
     if (portraits.length < 6) return;
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d'); if (!ctx) return;
-    const imgWidth = 1024; const imgHeight = Math.floor((imgWidth * 4) / 3);
-    const paddingX = 60; const paddingY = 100; const headerHeight = 250; const footerHeight = 150;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const imgWidth = 1024;
+    const imgHeight = Math.floor((imgWidth * 4) / 3);
+    const paddingX = 60;
+    const paddingY = 100;
+    const headerHeight = 250;
+    const footerHeight = 150;
     canvas.width = (imgWidth * 3) + (paddingX * 4);
     canvas.height = headerHeight + (imgHeight + paddingY) * 2 + footerHeight;
-    ctx.fillStyle = '#fdfaf6'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#2c2c2c'; ctx.font = 'bold 90px "Noto Serif TC", serif'; ctx.textAlign = 'center';
-    ctx.fillText('匠心藝境・時光肖像館', canvas.width / 2, 155);
+    ctx.fillStyle = '#fdfaf6';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#2c2c2c';
+    ctx.font = 'bold 90px "Noto Serif TC", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('匠心藝境・時光肖像館', canvas.width / 2, 140);
+    
+    ctx.font = 'italic 40px "Inter", sans-serif';
+    ctx.fillStyle = '#888888';
+    ctx.fillText('TRAVEL THROUGH TIME AND DISCOVER YOURSELF', canvas.width / 2, 205);
+
     const loadImg = (url: string) => new Promise<HTMLImageElement>((resolve) => {
-      const img = new Image(); img.crossOrigin = "anonymous"; img.onload = () => resolve(img); img.src = url;
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.src = url;
     });
     for (let i = 0; i < portraits.length; i++) {
       const img = await loadImg(portraits[i].url);
-      const row = Math.floor(i / 3); const col = i % 3;
-      const x = paddingX + col * (imgWidth + paddingX); const y = headerHeight + row * (imgHeight + paddingY);
-      ctx.fillStyle = '#ffffff'; ctx.shadowColor = 'rgba(0,0,0,0.1)'; ctx.shadowBlur = 20;
-      ctx.fillRect(x - 10, y - 10, imgWidth + 20, imgHeight + 80); ctx.shadowBlur = 0;
+      const row = Math.floor(i / 3);
+      const col = i % 3;
+      const x = paddingX + col * (imgWidth + paddingX);
+      const y = headerHeight + row * (imgHeight + paddingY);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(0,0,0,0.1)';
+      ctx.shadowBlur = 20;
+      ctx.fillRect(x - 10, y - 10, imgWidth + 20, imgHeight + 80);
+      ctx.shadowBlur = 0;
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
-      ctx.fillStyle = '#2c2c2c'; ctx.font = 'bold 35px "Noto Serif TC", serif'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#2c2c2c';
+      ctx.font = 'bold 35px "Noto Serif TC", serif';
+      ctx.textAlign = 'center';
       ctx.fillText(portraits[i].style, x + imgWidth / 2, y + imgHeight + 50);
     }
-    ctx.fillStyle = '#888888'; ctx.font = 'italic 42px "Inter", sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText('TRAVEL THROUGH TIME AND DISCOVER YOURSELF. DESIGNED BY 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
+    ctx.fillStyle = '#888888';
+    ctx.font = '35px "Inter", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Professional Time-Travel Portraits. Designed by 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
     const collageUrl = canvas.toDataURL('image/jpeg', 0.95);
     downloadImage(collageUrl, 'time-traveler-professional-collage.jpg');
   }, [portraits]);
@@ -383,39 +579,39 @@ export default function App() {
                 </div>
               </div>
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
-              <div className="mt-2 space-y-3">
+              <div className="mt-1 space-y-1.5">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-sm font-bold text-dark-green mb-2">指定性別</label>
+                  <div><label className="block text-xs font-bold text-dark-green mb-1">指定性別</label>
                     <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
-                      <button onClick={() => setGender('male')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>男性</button>
-                      <button onClick={() => setGender('female')} className={`flex-1 py-1.5 rounded-lg text-xs font-bold ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>女性</button>
+                      <button onClick={() => setGender('male')} className={`flex-1 py-1 rounded-lg text-xs font-bold ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>男性</button>
+                      <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-bold ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>女性</button>
                     </div>
                   </div>
-                  <div><label className="block text-sm font-bold text-dark-green mb-2">解析度</label>
+                  <div><label className="block text-xs font-bold text-dark-green mb-1">解析度</label>
                     <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
                       {[{ id: "1K", label: "標準版" }, { id: "2K", label: "典藏版" }].map((res) => (
-                        <button key={res.id} onClick={() => setResolution(res.id)} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold ${resolution === res.id ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>{res.label}</button>
+                        <button key={res.id} onClick={() => setResolution(res.id)} className={`flex-1 py-1 rounded-lg text-[10px] font-bold ${resolution === res.id ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>{res.label}</button>
                       ))}
                     </div>
                   </div>
                 </div>
-                <div className="mt-2"><label className="block text-sm font-bold text-dark-green mb-2">補充說明</label>
-                  <textarea value={additionalDesc} onChange={(e) => setAdditionalDesc(e.target.value)} placeholder="例如：保留眼鏡特徵、服裝以深色系為主⋯" className="w-full py-2 px-3 bg-ivory border border-antique-gold/20 rounded-xl text-base h-16 text-stone-700 font-bold" />
+                <div className="mt-1"><label className="block text-xs font-bold text-dark-green mb-1">補充說明</label>
+                  <textarea value={additionalDesc} onChange={(e) => setAdditionalDesc(e.target.value)} placeholder="例如：保留眼鏡特徵、服裝以深色系為主⋯" className="w-full py-1.5 px-3 bg-ivory border border-antique-gold/20 rounded-xl text-sm h-12 text-stone-700 font-bold" />
                 </div>
               </div>
-              <button disabled={!sourceImage || isGenerating || selectedStyleIds.length === 0} onClick={generatePortraits} className={`w-full mt-3 h-16 rounded-xl font-bold transition-all flex items-center justify-center gap-3 ${!sourceImage || isGenerating || selectedStyleIds.length === 0 ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white shadow-lg'}`}>
+              <button disabled={!sourceImage || isGenerating || selectedStyleIds.length === 0} onClick={generatePortraits} className={`w-full mt-2 h-12 rounded-xl font-bold transition-all flex items-center justify-center gap-3 ${!sourceImage || isGenerating || selectedStyleIds.length === 0 ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white shadow-lg'}`}>
                 {isGenerating ? <><Loader2 className="w-6 h-6 animate-spin" /><span>生成中 ({Math.round(progress)}%)</span></> : <><Sparkles className="w-6 h-6" /><span>生成你的時光肖像</span></>}
               </button>
               {error && <div className="mt-4 p-4 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100">{error}</div>}
             </section>
           </div>
 
-          <div className="flex-1 space-y-8">
-            <div className="flex items-center justify-between mb-6"><h2 className="text-xl font-display font-bold text-dark-green flex items-center gap-2"><Grid className="w-5 h-5 text-antique-gold" />時光畫廊</h2>
+          <div className="flex-1 flex flex-col pt-2 md:pt-3">
+            <div className="flex items-center justify-between mb-6"><h2 className="text-lg md:text-xl font-display font-bold text-dark-green flex items-center gap-2"><Grid className="w-5 h-5 text-antique-gold" />時光畫廊</h2>
               {portraits.length >= 6 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
             </div>
             {portraits.length === 0 && !isGenerating ? (
-              <div className="w-full aspect-[16/9] min-h-[300px] flex flex-col items-center justify-center border-2 border-dashed border-antique-gold/20 rounded-[40px] bg-white/40"><ImageIcon className="w-16 h-16 mb-4 text-antique-gold/20" /><p className="text-xl font-display italic text-antique-gold/40">等待開啟時光之門</p></div>
+              <div className="w-full flex-grow min-h-[450px] flex flex-col items-center justify-center border-2 border-dashed border-antique-gold/20 rounded-[40px] bg-white/40"><ImageIcon className="w-16 h-16 mb-4 text-antique-gold/20" /><p className="text-xl font-display italic text-antique-gold/40">等待開啟時光之門</p></div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 pb-12">
                 <AnimatePresence mode="popLayout">
@@ -428,7 +624,7 @@ export default function App() {
                             <button onClick={(e) => { e.stopPropagation(); setRefiningPortraitId(portrait.id); }} className="bg-white/90 p-3 rounded-full shadow-lg"><Edit3 className="w-6 h-6 text-dark-green" /></button>
                           </div>
                           <button onClick={(e) => { e.stopPropagation(); downloadImage(portrait.url, `portrait-${portrait.styleEn.toLowerCase().replace(/ /g, '-')}.jpg`); }} className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow-md opacity-0 group-hover:opacity-100"><Download className="w-4 h-4" /></button>
-                        </div><div className="p-4 text-center border-t border-antique-gold/10 bg-ivory/50"><p className="font-display font-bold text-dark-green text-lg leading-tight">{portrait.style}</p></div></div>
+                        </div><div className="p-4 text-center border-t border-antique-gold/10 bg-ivory/50"><p className="font-display font-bold text-dark-green text-sm leading-tight">{portrait.style}</p></div></div>
                     </motion.div>
                   ))}
                   {isGenerating && Array.from({ length: Math.max(0, selectedStyleIds.length - portraits.length) }).map((_, i) => (
@@ -470,7 +666,7 @@ export default function App() {
                     <div className="mb-6"><p className="text-sm text-sepia/70 leading-relaxed mb-4">您正在修改 <span className="font-bold text-dark-green">{portraits.find(p => p.id === refiningPortraitId)?.style}</span> 風格的肖像。</p></div>
                     <div className="flex-1 space-y-6">
                       <div><label className="block text-sm font-bold text-dark-green mb-2">修改指令</label>
-                        <textarea value={refinementPrompt} onChange={(e) => setRefinementPrompt(e.target.value)} placeholder="例如：更換髮型、更改衣服顏色⋯" className="w-full p-4 bg-white border border-antique-gold/20 rounded-2xl text-base h-48 text-stone-700 font-bold" />
+                        <textarea value={refinementPrompt} onChange={(e) => setRefinementPrompt(e.target.value)} placeholder="例如：更換髮型、更改衣服顏色、移除配件⋯" className="w-full p-4 bg-white border border-antique-gold/20 rounded-2xl text-base h-48 text-stone-700 font-bold" />
                       </div>
                       <button disabled={!refinementPrompt || isGenerating} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg ${!refinementPrompt || isGenerating ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white'}`}>
                         {isGenerating ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改</span></>}
@@ -505,7 +701,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <div className="flex items-center justify-center gap-4 mb-4"><div className="h-px w-16 bg-antique-gold"></div><History className="w-8 h-8 text-antique-gold" /><div className="h-px w-16 bg-antique-gold"></div></div>
           <p className="text-antique-gold font-display font-bold text-2xl mb-1 tracking-wide">屏東職人町</p>
-          <p className="text-ivory/60 text-sm mb-4 font-elegant tracking-wide">屏東縣屏東市仁德路43巷6號</p>
+          <p className="text-ivory/60 text-sm mb-4 font-sans tracking-wide">屏東縣屏東市仁德路43巷6號</p>
           <div className="h-px w-full max-w-xs bg-antique-gold/20 mx-auto mb-4"></div>
           <p className="text-ivory/40 text-[10px] tracking-widest uppercase italic">© 2026 匠心藝境・時光肖像館. DESIGNED BY 蔓影蔓食. All rights reserved.</p>
         </div>
