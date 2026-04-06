@@ -688,7 +688,7 @@ export default function App() {
                         <label className="block text-sm font-bold text-dark-green mb-2">修改指令 (Refinement Request)</label>
                         <textarea value={refinementPrompt} onChange={(e) => setRefinementPrompt(e.target.value)} placeholder="例如：更換髮型、更改衣服顏色、移除物件..." className="w-full p-4 bg-white border border-antique-gold/20 rounded-2xl text-base h-48 text-stone-700 font-bold" />
                       </div>
-                      <button disabled={!refinementPrompt || isGenerating} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 shadow-sm ${!refinementPrompt || isGenerating ? 'bg-stone-100 text-stone-400' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'}`}>
+                      <button disabled={!refinementPrompt || isGenerating} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg ${!refinementPrompt || isGenerating ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white'}`}>
                         {isGenerating ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改 (Apply Refinement)</span></>}
                       </button>
                     </div>
