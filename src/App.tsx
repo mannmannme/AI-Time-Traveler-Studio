@@ -643,15 +643,23 @@ export default function App() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setRefiningPortraitId(null)} className="absolute inset-0 bg-dark-green/60 backdrop-blur-md" />
             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-3xl bg-ivory rounded-[40px] shadow-2xl overflow-hidden border border-antique-gold/20">
               <div className="p-6 md:p-10">
-                <div className="flex items-center justify-between mb-8"><h3 className="text-2xl font-display font-bold text-dark-green flex items-center gap-3"><Edit3 className="w-6 h-6 text-antique-gold" />修改肖像</h3><button onClick={() => setRefiningPortraitId(null)} className="p-2 hover:bg-antique-gold/10 rounded-full"><X className="w-6 h-6 text-sepia/50" /></button></div>
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-display font-bold text-dark-green flex items-center gap-3">
+                    <Edit3 className="w-6 h-6 text-antique-gold" />
+                    修改肖像 (Refine Portrait)
+                  </h3>
+                  <button onClick={() => setRefiningPortraitId(null)} className="p-2 hover:bg-antique-gold/10 rounded-full">
+                    <X className="w-6 h-6 text-sepia/50" strokeWidth={1.5} />
+                  </button>
+                </div>
                 <div className="flex flex-col md:flex-row gap-10">
                   <div className="w-full md:w-[45%]">
                     <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border-8 border-white ring-1 ring-antique-gold/10 relative group">
                       <img src={portraits.find(p => p.id === refiningPortraitId)?.url} alt="To refine" className="w-full h-full object-cover absolute inset-0" />
                       <canvas ref={canvasRef} width={1024} height={1365} onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing} onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing} className="absolute inset-0 w-full h-full cursor-crosshair touch-none" />
                       <div className="absolute top-4 left-4 flex flex-col gap-2">
-                        <button onClick={undoLastPath} className="p-2 bg-white/90 rounded-full shadow-md"><Undo2 className="w-4 h-4" /></button>
-                        <button onClick={clearCanvas} className="p-2 bg-white/90 rounded-full shadow-md"><Eraser className="w-4 h-4" /></button>
+                        <button onClick={undoLastPath} className="p-2 bg-white/90 rounded-full shadow-md"><Undo2 className="w-4 h-4" strokeWidth={1.5} /></button>
+                        <button onClick={clearCanvas} className="p-2 bg-white/90 rounded-full shadow-md"><Eraser className="w-4 h-4" strokeWidth={1.5} /></button>
                       </div>
                     </div>
                     <div className="mt-4 flex flex-col items-center gap-3">
@@ -660,16 +668,28 @@ export default function App() {
                           <button key={color} onClick={() => setBrushColor(color)} className={`w-7 h-7 rounded-full border-2 transition-all ${brushColor === color ? 'scale-125 border-dark-green shadow-md' : 'border-white shadow-sm'}`} style={{ backgroundColor: color }} />
                         ))}
                       </div>
+                      <p className="text-[10px] text-sepia/40 italic text-center">
+                        提示：您可以使用畫筆圈選想要修改的地方<br />
+                        (Tip: Use the brush to mark areas to refine)
+                      </p>
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col">
-                    <div className="mb-6"><p className="text-sm text-sepia/70 leading-relaxed mb-4">您正在修改 <span className="font-bold text-dark-green">{portraits.find(p => p.id === refiningPortraitId)?.style}</span> 風格的肖像。</p></div>
-                    <div className="flex-1 space-y-6">
-                      <div><label className="block text-sm font-bold text-dark-green mb-2">修改指令</label>
-                        <textarea value={refinementPrompt} onChange={(e) => setRefinementPrompt(e.target.value)} placeholder="例如：更換髮型、更改衣服顏色、移除配件⋯" className="w-full p-4 bg-white border border-antique-gold/20 rounded-2xl text-base h-48 text-stone-700 font-bold" />
+                    <div className="mb-6">
+                      <p className="text-sm text-sepia/70 leading-relaxed mb-4">
+                        您正在修改 <span className="font-bold text-dark-green">{portraits.find(p => p.id === refiningPortraitId)?.style} ({portraits.find(p => p.id === refiningPortraitId)?.styleEn})</span> 風格的肖像。
+                      </p>
+                      <div className="bg-[#fdf8e9] border border-[#f0e6cc] rounded-2xl p-4 text-xs text-sepia/60 italic leading-relaxed">
+                        AI 將會在保留原圖背景與構圖的基礎上進行修改，請在下方輸入具體的調整細節。
                       </div>
-                      <button disabled={!refinementPrompt || isGenerating} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg ${!refinementPrompt || isGenerating ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white'}`}>
-                        {isGenerating ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改</span></>}
+                    </div>
+                    <div className="flex-1 space-y-6">
+                      <div>
+                        <label className="block text-sm font-bold text-dark-green mb-2">修改指令 (Refinement Request)</label>
+                        <textarea value={refinementPrompt} onChange={(e) => setRefinementPrompt(e.target.value)} placeholder="例如：更換髮型、更改衣服顏色、移除物件..." className="w-full p-4 bg-white border border-antique-gold/20 rounded-2xl text-base h-48 text-stone-700 font-bold" />
+                      </div>
+                      <button disabled={!refinementPrompt || isGenerating} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 shadow-sm ${!refinementPrompt || isGenerating ? 'bg-stone-100 text-stone-400' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'}`}>
+                        {isGenerating ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改 (Apply Refinement)</span></>}
                       </button>
                     </div>
                   </div>
@@ -684,11 +704,11 @@ export default function App() {
         {previewImageUrl && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/95 backdrop-blur-xl" onClick={() => setPreviewImageUrl(null)}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative max-w-5xl w-full h-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
-              <button onClick={() => setPreviewImageUrl(null)} className="absolute top-0 right-0 md:-top-10 md:-right-10 p-3 bg-white/10 rounded-full text-white z-10"><X className="w-8 h-8" /></button>
+              <button onClick={() => setPreviewImageUrl(null)} className="absolute top-0 right-0 md:-top-10 md:-right-10 p-3 bg-white/10 rounded-full text-white z-10"><X className="w-8 h-8" strokeWidth={1.5} /></button>
               <div className="relative w-full h-full flex items-center justify-center">
                 <img src={previewImageUrl} alt="Preview" className="max-w-full max-h-full object-contain rounded-lg shadow-2xl border-4 border-white/10" />
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4">
-                  <button onClick={() => { const portrait = portraits.find(p => p.url === previewImageUrl); if (portrait) downloadImage(portrait.url, `portrait-${portrait.styleEn.toLowerCase().replace(/ /g, '-')}.jpg`); }} className="flex items-center gap-1.5 px-4 py-2 bg-white/30 backdrop-blur-md text-white rounded-full font-bold shadow-md text-xs border border-white/20"><Download className="w-3.5 h-3.5" /><span>下載照片</span></button>
+                  <button onClick={() => { const portrait = portraits.find(p => p.url === previewImageUrl); if (portrait) downloadImage(portrait.url, `portrait-${portrait.styleEn.toLowerCase().replace(/ /g, '-')}.jpg`); }} className="flex items-center gap-1.5 px-4 py-2 bg-white/30 backdrop-blur-md text-white rounded-full font-bold shadow-md text-xs border border-white/20"><Download className="w-3.5 h-3.5" strokeWidth={1.5} /><span>下載照片 (Download)</span></button>
                 </div>
               </div>
             </motion.div>
