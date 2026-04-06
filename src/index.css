@@ -16,8 +16,10 @@
   --color-antique-gold: #b8860b;
 }
 
-body {
+html, body {
   @apply bg-ivory text-sepia antialiased font-sans relative overflow-x-hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Paper Texture Overlay */
@@ -34,6 +36,63 @@ body::before {
   z-index: -1;
 }
 
+/* Film Grain Effect */
+.film-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("https://www.transparenttextures.com/patterns/stardust.png");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.nostalgic-border {
+  border: 12px solid #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.nostalgic-border::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 1px solid var(--color-antique-gold);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.sepia-overlay {
+  background: rgba(112, 66, 20, 0.08);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-antique-gold);
+  border-radius: 10px;
+  opacity: 0.5;
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #b8860b 0%, #cfb53b 50%, #b8860b 100%);
+}
+
+.burgundy-gradient {
+  background: linear-gradient(135deg, #800020 0%, #a52a2a 100%);
+}
+
+.burgundy-dark-gradient {
+  background: linear-gradient(135deg, #4d0013 0%, #800020 100%);
+}
 /* Film Grain Effect */
 .film-grain {
   position: fixed;
