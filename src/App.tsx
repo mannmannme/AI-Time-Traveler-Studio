@@ -590,7 +590,7 @@ export default function App() {
                   <div><label className="block text-xs font-bold text-dark-green mb-1">解析度</label>
                     <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
                       {[{ id: "1K", label: "標準版" }, { id: "2K", label: "典藏版" }].map((res) => (
-                        <button key={res.id} onClick={() => setResolution(res.id)} className={`flex-1 py-1 rounded-lg text-[10px] font-bold ${resolution === res.id ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>{res.label}</button>
+                        <button key={res.id} onClick={() => setResolution(res.id)} className={`flex-1 py-1 rounded-lg text-xs font-bold ${resolution === res.id ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>{res.label}</button>
                       ))}
                     </div>
                   </div>
@@ -700,8 +700,8 @@ export default function App() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none"></div>
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <div className="flex items-center justify-center gap-4 mb-4"><div className="h-px w-16 bg-antique-gold"></div><History className="w-8 h-8 text-antique-gold" /><div className="h-px w-16 bg-antique-gold"></div></div>
-          <p className="text-antique-gold font-display font-bold text-2xl mb-1 tracking-wide">屏東職人町</p>
-          <p className="text-ivory/60 text-sm mb-4 font-sans tracking-wide">屏東縣屏東市仁德路43巷6號</p>
+          <p className="text-antique-gold font-display font-bold text-2xl mb-1 tracking-widest">屏東職人町</p>
+          <p className="text-ivory/60 text-sm mb-4 font-sans tracking-widest">屏東縣屏東市仁德路43巷6號</p>
           <div className="h-px w-full max-w-xs bg-antique-gold/20 mx-auto mb-4"></div>
           <p className="text-ivory/40 text-[10px] tracking-widest uppercase italic">© 2026 匠心藝境・時光肖像館. DESIGNED BY 蔓影蔓食. All rights reserved.</p>
         </div>
