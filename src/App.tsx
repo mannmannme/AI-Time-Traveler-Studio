@@ -243,14 +243,17 @@ export default function App() {
     const totalStyles = stylesToGenerate.length;
     let completedCount = 0;
 
+    console.log("Starting generation for styles:", stylesToGenerate.map(s => s.nameEn));
+
     try {
       for (const style of stylesToGenerate) {
         let attempts = 0;
-        const maxAttempts = 2;
+        const maxAttempts = 3; // Increased attempts
         let success = false;
 
         while (attempts < maxAttempts && !success) {
           try {
+            console.log(`Generating style: ${style.nameEn} (Attempt ${attempts + 1})`);
             const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
             
             const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
@@ -281,7 +284,15 @@ export default function App() {
             });
 
             let imageUrl = "";
-            const parts = response.candidates?.[0]?.content?.parts || [];
+            const candidates = response.candidates || [];
+            
+            if (candidates.length === 0) {
+              console.warn(`No candidates returned for ${style.nameEn}. This might be a safety block.`);
+              success = true; // Skip if safety block
+              continue;
+            }
+
+            const parts = candidates[0].content?.parts || [];
             for (const part of parts) {
               if (part.inlineData) {
                 imageUrl = base64ToBlobUrl(part.inlineData.data, 'image/png');
@@ -300,15 +311,24 @@ export default function App() {
               };
               setPortraits(prev => [...prev, portrait]);
               success = true;
+              console.log(`Successfully generated ${style.nameEn}`);
             } else {
+              console.warn(`No image data in response for ${style.nameEn}`);
               success = true;
             }
           } catch (err: any) {
             attempts++;
-            if (attempts < maxAttempts && (err.message?.includes("500") || err.status === 500)) {
-              await new Promise(resolve => setTimeout(resolve, 2000));
+            console.error(`Error generating ${style.nameEn} (Attempt ${attempts}):`, err);
+            
+            if (attempts < maxAttempts) {
+              // Handle 429 (Rate Limit) with a longer wait
+              const isRateLimit = err.message?.includes("429") || err.status === 429;
+              const waitTime = isRateLimit ? 10000 : 3000;
+              console.log(`Waiting ${waitTime}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, waitTime));
             } else {
-              success = true;
+              console.error(`Failed to generate ${style.nameEn} after ${maxAttempts} attempts.`);
+              success = true; // Move to next style after max attempts
             }
           }
         }
@@ -316,6 +336,7 @@ export default function App() {
         setProgress((completedCount / totalStyles) * 100);
       }
     } catch (err: any) {
+      console.error("Fatal error in generation loop:", err);
       setError(err.message || "生成過程中發生錯誤。");
     } finally {
       setIsGenerating(false);
