@@ -534,8 +534,8 @@ export default function App() {
                 <Sparkles className="w-10 h-10 text-stone-800" strokeWidth={1.5} />
               </div>
               <h2 className="text-2xl font-display font-bold text-sepia mb-5">歡迎來到時光肖像館</h2>
-              <div className="space-y-2 mb-8">
-                <p className="text-sepia/80 font-elegant italic text-lg leading-relaxed">
+              <div className="space-y-2 mb-8 px-2">
+                <p className="text-sepia/80 font-elegant italic text-[17px] leading-relaxed">
                   為了生成高品質的專業級肖像，我們需要您提供一個具備付費功能的 Google Cloud 專案 API 金鑰。
                 </p>
                 <p className="text-sepia/40 text-[13px] font-sans italic">
@@ -553,7 +553,7 @@ export default function App() {
                 />
                 <button 
                   onClick={handleSaveManualKey} 
-                  className="w-full py-4 bg-gradient-to-b from-[#A01A1A] to-[#800000] text-white rounded-2xl font-bold text-lg shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-gradient-to-b from-[#A01A1A] to-[#800000] text-white rounded-2xl font-bold text-base shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                 >
                   <span>儲存並繼續 (Save and Continue)</span>
                 </button>
