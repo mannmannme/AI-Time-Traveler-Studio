@@ -60,7 +60,7 @@ const STYLES: StyleConfig[] = [
   },
   {
     name: "臺灣風華年代 (Formosa Radiance)",
-    nameEn: "Taiwan Golden Era",
+    nameEn: "Formosa Radiance",
     prompt: "Generate a portrait inspired by Taiwan in the 1970s. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Depict the subject as a confident and elegant urban figure from Taiwan’s golden era. Styling: For women, dressed in stylish 1970s attire such as a geometric-pattern blouse, high-waisted trousers, a retro dress, or flared pants. For men, a classic 1970s safari jacket, a polo shirt, or a retro patterned shirt with flared trousers and sideburns typical of the era. Style: Historical realism with a cinematic and nostalgic atmosphere, photorealistic yet timeless, inspired by 1970s Taiwanese films and vintage studio photography. Warm, natural lighting with soft shadows. Muted earthy tones such as caramel brown, mustard yellow, olive green, and brick red. CRITICAL: Depict the subject as at least 10 years younger than they appear in the reference image, ensuring they look fresh, vibrant, and youthful. Strictly avoid any styling that looks aged or overly mature. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). Hair: Natural, fresh, and sophisticated 1970s hairstyle. For women, prioritize youthful and vibrant hairstyles (e.g., soft long waves, a high ponytail, or a fresh layered cut) to avoid any aged appearance. Makeup: Natural, fresh, and sophisticated makeup typical of the 1970s. Subtle film grain for authenticity. No exaggerated retro filters or sepia effects. No modern fashion aesthetics. Background: A nostalgic Taiwanese streetscape with a few traditional shop signs and arcade buildings, or a vintage photo studio with a warm gradient backdrop. CRITICAL: The streetscape must be empty of other people; strictly no pedestrians or bystanders in the background. Keep the background clean and avoid a cluttered row of signs; only a few authentic signs are needed for atmosphere. Use a shallow depth of field to naturally blur the background elements, especially the shop signs and signboards, so that any text on them is softly out of focus and not clearly legible. Include authentic cultural elements such as scooters or old signboards. Accessories: A leather handbag or classic wristwatch. Composition: CRITICAL: This MUST be a tight half-body portrait. The subject MUST appear very large and prominent, filling at least 85-90% of the vertical space. The subject should be shown from the waist up, with the head and upper torso dominating the frame. Do not let the background streetscape overwhelm the subject; the person is the absolute focus. Elegant and confident posture, centered composition, vertical aspect ratio of 3:4. Mood: Warm, nostalgic, and refined—capturing the prosperity and cultural charm of Taiwan in the 1970s. Output: High resolution, ultra-detailed, photorealistic, cinematic quality. Avoid modern buildings, contemporary fashion, neon cyberpunk elements, heavy sepia filters, exaggerated retro styling, anime aesthetics, and futuristic objects. Add subtle 1970s film grain and warm Kodak color tones. Strictly forbid all modern items and accessories, especially smartwatches, smartphones, or digital devices. Every element must be historically accurate to the 1970s. Ensure background text is blurred and illegible."
   },
   {
@@ -251,7 +251,7 @@ export default function App() {
 
         while (attempts < maxAttempts && !success) {
           try {
-            const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Taiwan Golden Era"].includes(style.nameEn);
+            const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
             
             const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
             ${additionalDesc ? `Additional user request: ${additionalDesc}` : ''}
@@ -520,7 +520,7 @@ export default function App() {
     ctx.textAlign = 'center';
     ctx.fillText('Professional Time-Travel Portraits. Designed by 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
     const collageUrl = canvas.toDataURL('image/jpeg', 0.95);
-    downloadImage(collageUrl, 'time-traveler-professional-collage.jpg');
+    downloadImage(collageUrl, 'portrait-collage.jpg');
   }, [portraits]);
 
   return (
@@ -623,7 +623,13 @@ export default function App() {
                             <button onClick={() => setPreviewImageUrl(portrait.url)} className="bg-white/90 p-3 rounded-full shadow-lg"><Maximize className="w-6 h-6 text-dark-green" /></button>
                             <button onClick={(e) => { e.stopPropagation(); setRefiningPortraitId(portrait.id); }} className="bg-white/90 p-3 rounded-full shadow-lg"><Edit3 className="w-6 h-6 text-dark-green" /></button>
                           </div>
-                          <button onClick={(e) => { e.stopPropagation(); downloadImage(portrait.url, `portrait-${portrait.styleEn.toLowerCase().replace(/ /g, '-')}.jpg`); }} className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow-md opacity-0 group-hover:opacity-100"><Download className="w-4 h-4" /></button>
+                          <button onClick={(e) => { 
+                            e.stopPropagation(); 
+                            const slug = portrait.styleEn.toLowerCase().replace(/ /g, '-');
+                            const stylePortraits = portraits.filter(p => p.styleEn === portrait.styleEn);
+                            const index = stylePortraits.findIndex(p => p.id === portrait.id) + 1;
+                            downloadImage(portrait.url, `portrait-${slug}-${index}.jpg`); 
+                          }} className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow-md opacity-0 group-hover:opacity-100"><Download className="w-4 h-4" /></button>
                         </div><div className="p-4 text-center border-t border-antique-gold/10 bg-ivory/50"><p className="font-display font-bold text-dark-green text-sm leading-tight">{portrait.style}</p></div></div>
                     </motion.div>
                   ))}
@@ -708,7 +714,15 @@ export default function App() {
               <div className="relative w-full h-full flex items-center justify-center">
                 <img src={previewImageUrl} alt="Preview" className="max-w-full max-h-full object-contain rounded-lg shadow-2xl border-4 border-white/10" />
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4">
-                  <button onClick={() => { const portrait = portraits.find(p => p.url === previewImageUrl); if (portrait) downloadImage(portrait.url, `portrait-${portrait.styleEn.toLowerCase().replace(/ /g, '-')}.jpg`); }} className="flex items-center gap-1.5 px-4 py-2 bg-white/30 backdrop-blur-md text-white rounded-full font-bold shadow-md text-xs border border-white/20"><Download className="w-3.5 h-3.5" strokeWidth={1.5} /><span>下載照片 (Download)</span></button>
+                  <button onClick={() => { 
+                    const portrait = portraits.find(p => p.url === previewImageUrl); 
+                    if (portrait) {
+                      const slug = portrait.styleEn.toLowerCase().replace(/ /g, '-');
+                      const stylePortraits = portraits.filter(p => p.styleEn === portrait.styleEn);
+                      const index = stylePortraits.findIndex(p => p.id === portrait.id) + 1;
+                      downloadImage(portrait.url, `portrait-${slug}-${index}.jpg`);
+                    }
+                  }} className="flex items-center gap-1.5 px-4 py-2 bg-white/30 backdrop-blur-md text-white rounded-full font-bold shadow-md text-xs border border-white/20"><Download className="w-3.5 h-3.5" strokeWidth={1.5} /><span>下載照片 (Download)</span></button>
                 </div>
               </div>
             </motion.div>
