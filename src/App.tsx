@@ -1,39 +1,4 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
  */
-
-import React, { useState, useRef, useCallback } from 'react';
-import { GoogleGenAI } from "@google/genai";
-import { 
-  Upload, 
-  Download, 
-  History, 
-  Camera, 
-  Loader2, 
-  Image as ImageIcon,
-  ChevronRight,
-  RefreshCw,
-  Clock,
-  Sparkles,
-  Grid,
-  Edit3,
-  X,
-  Eraser,
-  Palette,
-  Undo2,
-  Maximize,
-  ZoomIn
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-
-// --- Types ---
-
-interface GeneratedPortrait {
-  id: string;
-  style: string;
-  styleEn: string;
-  url: string;
   prompt: string;
   caption?: string;
 }
