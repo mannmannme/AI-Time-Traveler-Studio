@@ -610,7 +610,7 @@ export default function App() {
   }, [portraits]);
 
   return (
-    <div className="flex flex-col min-h-screen font-sans bg-ivory selection:bg-antique-gold/30">
+    <div className="flex flex-col min-h-screen font-sans bg-ivory selection:bg-antique-gold/30 overflow-x-hidden">
       <div className="film-grain" />
       {/* API Key Selection Overlay */}
       <AnimatePresence>
@@ -700,7 +700,7 @@ export default function App() {
         <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
           
           {/* Left Sidebar: Controls */}
-          <div className="lg:w-[550px] xl:w-[650px] flex-shrink-0">
+          <div className="lg:w-[450px] xl:w-[550px] flex-shrink">
             <section className="bg-white/80 backdrop-blur-sm p-4 md:p-6 rounded-2xl shadow-xl border border-antique-gold/10 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto custom-scrollbar">
               <h2 className="text-lg md:text-xl font-display font-bold mb-4 md:mb-6 flex items-center gap-2 text-dark-green">
                 <Camera className="w-5 h-5 text-antique-gold" />
@@ -1185,7 +1185,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="bg-dark-green text-ivory py-6 px-4 mt-8 relative overflow-hidden">
+      <footer className="bg-dark-green text-ivory py-10 px-4 mt-auto w-full min-w-full relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none"></div>
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <div className="flex items-center justify-center gap-4 mb-4">
