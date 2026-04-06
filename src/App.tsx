@@ -821,13 +821,16 @@ export default function App() {
                       解析度 (Resolution)
                     </label>
                     <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
-                      {["1K", "2K"].map((res) => (
+                      {[
+                        { id: "1K", label: "標準版" },
+                        { id: "2K", label: "典藏版" }
+                      ].map((res) => (
                         <button
-                          key={res}
-                          onClick={() => setResolution(res)}
-                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${resolution === res ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
+                          key={res.id}
+                          onClick={() => setResolution(res.id as "1K" | "2K")}
+                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${resolution === res.id ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
                         >
-                          {res}
+                          {res.label}
                         </button>
                       ))}
                     </div>
