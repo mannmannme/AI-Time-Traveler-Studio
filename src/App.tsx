@@ -100,8 +100,8 @@ export default function App() {
   const [showKeyInput, setShowKeyInput] = useState(false);
   const [gender, setGender] = useState<'male' | 'female'>('female');
   const [additionalDesc, setAdditionalDesc] = useState('');
-  const [resolution, setResolution] = useState<string>("1K");
-  const [selectedStyleIds, setSelectedStyleIds] = useState<string[]>([]);
+  const [generationMode, setGenerationMode] = useState<'quick' | 'full'>('full');
+  const [selectedStyleIds, setSelectedStyleIds] = useState<string[]>(STYLES.map(s => s.nameEn));
   const [refiningPortraitId, setRefiningPortraitId] = useState<string | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [refinementPrompt, setRefinementPrompt] = useState('');
@@ -262,10 +262,10 @@ export default function App() {
           break;
         }
 
-        // Safer Segmented Generation Logic: Longer cooling periods to prevent 429 errors
+        // Balanced Segmented Generation Logic: Faster and stable
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
-          let waitSeconds = isSegmentBreak ? 25 : 10; // Increased to 25s/10s for stability
+          let waitSeconds = isSegmentBreak ? 10 : 5; // Balanced at 10s/5s
           
           while (waitSeconds > 0 && !stopSignalRef.current) {
             setCoolingTime(waitSeconds);
@@ -293,7 +293,7 @@ export default function App() {
             CRITICAL: Strictly maintain the person's original gender (${gender}). If the photo is male, the output MUST be male. If female, the output MUST be female.
             CRITICAL: Preserve the subject's original age from the reference image, but ensure they are depicted in their most elegant, fresh, and vibrant state for that age. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). The goal is a sophisticated and aesthetically beautiful portrait.
             CRITICAL: The subject MUST NOT look heavier or thicker than the reference image. Maintain the person's original body type, physique, and overall weight. If the reference image is a headshot, infer a proportionate and elegant body type consistent with the subject's facial features and gender. Strictly avoid any bloating or distortion of the subject's figure.
-            ${isHistorical ? `CRITICAL: Remove all modern accessories from the source image (e.g., watches, fitness trackers, modern jewelry, belts, modern glasses) to ensure strict historical authenticity for the chosen era.` : 'Maintain the aesthetic and stylistic authenticity of the chosen style.'}
+            ${isHistorical ? `CRITICAL: Ensure a clean historical look. The subject should NOT be wearing or holding any modern technology (no cameras, no smartwatches, no fitness trackers, no modern glasses). Focus on period-accurate attire and accessories.` : 'Maintain the aesthetic and stylistic authenticity of the chosen style.'}
             Output a high-resolution, photorealistic portrait suitable for professional and commercial use. 
             Aspect ratio: 3:4 (Portrait).`;
 
@@ -308,7 +308,7 @@ export default function App() {
               config: {
                 imageConfig: {
                   aspectRatio: "3:4", 
-                  imageSize: resolution as any
+                  imageSize: "1K"
                 }
               }
             });
@@ -573,18 +573,27 @@ export default function App() {
 
   const generateCollage = useCallback(async () => {
     const successfulPortraits = portraits.filter(p => p.status === 'success');
-    if (successfulPortraits.length < 6) return;
+    const count = successfulPortraits.length;
+    if (count < 1) return;
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Optimized layout: 3 columns for 3, 5, 6 images. 2 columns for 2, 4 images.
+    const cols = (count === 2 || count === 4) ? 2 : 3;
+    const rows = Math.ceil(count / cols);
+
     const imgWidth = 1024;
     const imgHeight = Math.floor((imgWidth * 4) / 3);
     const paddingX = 60;
     const paddingY = 100;
     const headerHeight = 250;
     const footerHeight = 150;
-    canvas.width = (imgWidth * 3) + (paddingX * 4);
-    canvas.height = headerHeight + (imgHeight + paddingY) * 2 + footerHeight;
+
+    canvas.width = (imgWidth * cols) + (paddingX * (cols + 1));
+    canvas.height = headerHeight + (imgHeight + paddingY) * rows + footerHeight;
+
     ctx.fillStyle = '#fdfaf6';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#2c2c2c';
@@ -602,27 +611,32 @@ export default function App() {
       img.onload = () => resolve(img);
       img.src = url;
     });
+
     for (let i = 0; i < successfulPortraits.length; i++) {
       const img = await loadImg(successfulPortraits[i].url);
-      const row = Math.floor(i / 3);
-      const col = i % 3;
+      const row = Math.floor(i / cols);
+      const col = i % cols;
       const x = paddingX + col * (imgWidth + paddingX);
       const y = headerHeight + row * (imgHeight + paddingY);
+      
       ctx.fillStyle = '#ffffff';
       ctx.shadowColor = 'rgba(0,0,0,0.1)';
       ctx.shadowBlur = 20;
       ctx.fillRect(x - 10, y - 10, imgWidth + 20, imgHeight + 80);
       ctx.shadowBlur = 0;
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
+      
       ctx.fillStyle = '#2c2c2c';
       ctx.font = 'bold 35px "Noto Serif TC", serif';
       ctx.textAlign = 'center';
       ctx.fillText(successfulPortraits[i].style, x + imgWidth / 2, y + imgHeight + 50);
     }
+    
     ctx.fillStyle = '#888888';
     ctx.font = '35px "Playfair Display", "Noto Serif TC", serif';
     ctx.textAlign = 'center';
     ctx.fillText('Professional Time-Travel Portraits. Designed by 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
+    
     const collageUrl = canvas.toDataURL('image/jpeg', 0.95);
     downloadImage(collageUrl, 'portrait-collage.jpg');
   }, [portraits]);
@@ -710,16 +724,40 @@ export default function App() {
                   {sourceImage ? <img src={sourceImage} alt="Source" className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center"><Upload className="w-8 h-8 text-antique-gold/40 mb-3" /><p className="text-sepia text-lg font-display font-bold">上傳照片</p></div>}
                 </div>
                 <div className="w-full sm:w-64">
-                  <div className="flex items-center justify-between mb-3"><label className="block text-sm font-display font-bold text-dark-green">選擇風格</label>
-                    <button onClick={() => setSelectedStyleIds(selectedStyleIds.length === STYLES.length ? [] : STYLES.map(s => s.nameEn))} className="text-[10px] px-2 py-1 rounded-md border font-display font-bold">{selectedStyleIds.length === STYLES.length ? '取消全選' : '一鍵全選'}</button>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-display font-bold text-dark-green">選擇風格</label>
+                    <span className="text-[10px] text-antique-gold font-bold">
+                      {generationMode === 'quick' ? `已選 ${selectedStyleIds.length}/3` : `已選 ${selectedStyleIds.length}/6`}
+                    </span>
                   </div>
                   <div className="grid grid-cols-1 gap-2 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
-                    {STYLES.map(style => (
-                      <label key={style.nameEn} className={`flex items-center justify-start gap-2 p-2 px-3 rounded-lg border cursor-pointer transition-all ${selectedStyleIds.includes(style.nameEn) ? 'bg-dark-green border-dark-green text-white' : 'bg-white border-antique-gold/10 text-sepia/70 hover:border-antique-gold/30'}`}>
-                        <input type="checkbox" className="hidden" checked={selectedStyleIds.includes(style.nameEn)} onChange={() => setSelectedStyleIds(selectedStyleIds.includes(style.nameEn) ? selectedStyleIds.filter(id => id !== style.nameEn) : [...selectedStyleIds, style.nameEn])} />
-                        <span className="text-xs font-display font-medium whitespace-nowrap">{style.name}</span>
-                      </label>
-                    ))}
+                    {STYLES.map(style => {
+                      const isSelected = selectedStyleIds.includes(style.nameEn);
+                      return (
+                        <label 
+                          key={style.nameEn} 
+                          className={`flex items-center justify-start gap-2 p-2 px-3 rounded-lg border cursor-pointer transition-all ${isSelected ? 'bg-dark-green border-dark-green text-white' : 'bg-white border-antique-gold/10 text-sepia/70 hover:border-antique-gold/30'}`}
+                        >
+                          <input 
+                            type="checkbox" 
+                            className="hidden" 
+                            checked={isSelected} 
+                            onChange={() => {
+                              if (isSelected) {
+                                setSelectedStyleIds(selectedStyleIds.filter(id => id !== style.nameEn));
+                              } else {
+                                if (generationMode === 'quick' && selectedStyleIds.length >= 3) {
+                                  alert("快速版最多只能選擇 3 個風格，如需更多請切換至完整版。");
+                                  return;
+                                }
+                                setSelectedStyleIds([...selectedStyleIds, style.nameEn]);
+                              }
+                            }} 
+                          />
+                          <span className="text-xs font-display font-medium whitespace-nowrap">{style.name}</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -732,11 +770,26 @@ export default function App() {
                       <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>女性</button>
                     </div>
                   </div>
-                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">解析度</label>
+                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">選擇模式</label>
                     <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
-                      {[{ id: "1K", label: "標準版" }, { id: "2K", label: "典藏版" }].map((res) => (
-                        <button key={res.id} onClick={() => setResolution(res.id)} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${resolution === res.id ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>{res.label}</button>
-                      ))}
+                      <button 
+                        onClick={() => {
+                          setGenerationMode('quick');
+                          setSelectedStyleIds(STYLES.slice(0, 3).map(s => s.nameEn));
+                        }} 
+                        className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${generationMode === 'quick' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
+                      >
+                        快速版
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setGenerationMode('full');
+                          setSelectedStyleIds(STYLES.map(s => s.nameEn));
+                        }} 
+                        className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${generationMode === 'full' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
+                      >
+                        完整版
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -797,7 +850,7 @@ export default function App() {
 
           <div className="flex-1 flex flex-col pt-2 md:pt-3">
             <div className="flex items-center justify-between mb-6"><h2 className="text-lg md:text-xl font-display font-bold text-dark-green flex items-center gap-2"><Grid className="w-5 h-5 text-antique-gold" />時光畫廊</h2>
-              {portraits.filter(p => p.status === 'success').length >= 6 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-display font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
+              {portraits.filter(p => p.status === 'success').length >= 1 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-display font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
             </div>
             {portraits.length === 0 && !isGenerating ? (
               <div className="w-full flex-grow min-h-[450px] flex flex-col items-center justify-center border-2 border-dashed border-antique-gold/20 rounded-[40px] bg-white/40"><ImageIcon className="w-16 h-16 mb-4 text-antique-gold/20" /><p className="text-xl font-display italic text-antique-gold/40">等待開啟時光之門</p></div>
