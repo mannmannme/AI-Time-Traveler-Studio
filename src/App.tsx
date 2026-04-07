@@ -380,7 +380,15 @@ export default function App() {
     setHasKey(false);
     setShowKeyInput(true);
     setIsChangingKey(true);
-    // Don't remove from localStorage yet, only when saving new key
+    setManualApiKey('');
+  };
+
+  const handleClearApiKey = () => {
+    localStorage.removeItem('gemini_api_key');
+    setManualApiKey('');
+    setHasKey(false);
+    setShowKeyInput(true);
+    setIsChangingKey(false); // No "X" button because it's cleared
   };
 
   const refinePortrait = async () => {
@@ -593,7 +601,12 @@ export default function App() {
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white p-8 rounded-[40px] max-w-[460px] w-full text-center shadow-2xl border border-antique-gold/10 relative">
               {isChangingKey && (
                 <button 
-                  onClick={() => { setHasKey(true); setIsChangingKey(false); }} 
+                  onClick={() => { 
+                    setHasKey(true); 
+                    setIsChangingKey(false); 
+                    const savedKey = localStorage.getItem('gemini_api_key');
+                    if (savedKey) setManualApiKey(savedKey);
+                  }} 
                   className="absolute top-6 right-6 p-2 hover:bg-stone-100 rounded-full transition-colors z-10"
                 >
                   <X className="w-5 h-5 text-stone-400" />
@@ -725,13 +738,22 @@ export default function App() {
               )}
 
               {!isGenerating && (
-                <button 
-                  onClick={handleChangeApiKey} 
-                  className="w-full mt-4 h-10 rounded-xl font-display font-bold text-sepia/40 hover:text-sepia/80 border border-dashed border-sepia/20 hover:bg-sepia/5 transition-all flex items-center justify-center gap-2 text-[13px]"
-                >
-                  <Key className="w-3 h-3" />
-                  <span>更換 API 金鑰 (Change API Key)</span>
-                </button>
+                <div className="mt-4 space-y-2">
+                  <button 
+                    onClick={handleChangeApiKey} 
+                    className="w-full h-10 rounded-xl font-display font-bold text-sepia/40 hover:text-sepia/80 border border-dashed border-sepia/20 hover:bg-sepia/5 transition-all flex items-center justify-center gap-2 text-[13px]"
+                  >
+                    <Key className="w-3 h-3" />
+                    <span>更換 API 金鑰 (Change API Key)</span>
+                  </button>
+                  <button 
+                    onClick={handleClearApiKey}
+                    className="w-full h-10 rounded-xl font-display font-bold text-red-800/20 hover:text-red-800/60 border border-dashed border-red-800/10 hover:bg-red-800/5 transition-all flex items-center justify-center gap-2 text-[11px]"
+                  >
+                    <Eraser className="w-3 h-3" />
+                    <span>清除金鑰並登出 (Clear & Logout)</span>
+                  </button>
+                </div>
               )}
 
               {error && <div className="mt-4 p-4 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100">{error}</div>}
