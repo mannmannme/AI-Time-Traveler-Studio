@@ -242,20 +242,27 @@ export default function App() {
       return;
     }
 
-    const ai = new GoogleGenAI({ apiKey });
-    const model = "gemini-3.1-flash-image-preview";
-    
-    const resizedImage = await resizeImage(sourceImage);
-    const base64Data = resizedImage.split(',')[1];
-    const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
-
-    const stylesToGenerate = STYLES.filter(s => selectedStyleIds.includes(s.nameEn));
-    const totalStyles = stylesToGenerate.length;
-    let completedCount = 0;
-
-    console.log("Starting generation for styles:", stylesToGenerate.map(s => s.nameEn));
-
     try {
+      const ai = new GoogleGenAI({ apiKey });
+      const model = "gemini-3.1-flash-image-preview";
+      
+      const resizedImage = await resizeImage(sourceImage);
+      if (stopSignalRef.current) { setIsGenerating(false); return; }
+      const base64Data = resizedImage.split(',')[1];
+      const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
+
+      const stylesToGenerate = STYLES.filter(s => selectedStyleIds.includes(s.nameEn));
+      const totalStyles = stylesToGenerate.length;
+      
+      if (totalStyles === 0) {
+        setError("請至少選擇一個風格。");
+        setIsGenerating(false);
+        return;
+      }
+      let completedCount = 0;
+
+      console.log("Starting generation for styles:", stylesToGenerate.map(s => s.nameEn));
+
       for (const style of stylesToGenerate) {
         if (stopSignalRef.current) {
           console.log("Generation stopped by user.");
