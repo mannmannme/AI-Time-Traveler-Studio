@@ -884,13 +884,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <footer className="bg-dark-green text-ivory py-10 px-4 mt-auto w-full min-w-full relative overflow-hidden">
+      <footer className="bg-dark-green text-ivory py-6 px-4 mt-auto w-full min-w-full relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none"></div>
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="flex items-center justify-center gap-4 mb-4"><div className="h-px w-16 bg-antique-gold"></div><History className="w-8 h-8 text-antique-gold" /><div className="h-px w-16 bg-antique-gold"></div></div>
-          <p className="text-antique-gold font-display font-bold text-2xl mb-1 tracking-wide">屏東職人町</p>
-          <p className="text-ivory/60 text-sm mb-4 font-display tracking-wide">屏東縣屏東市仁德路43巷6號</p>
-          <div className="h-px w-full max-w-xs bg-antique-gold/20 mx-auto mb-4"></div>
+          <div className="flex items-center justify-center gap-4 mb-3"><div className="h-px w-16 bg-antique-gold"></div><History className="w-6 h-6 text-antique-gold" /><div className="h-px w-16 bg-antique-gold"></div></div>
+          <p className="text-antique-gold font-display font-bold text-xl mb-1 tracking-wide">屏東職人町</p>
+          <p className="text-ivory/60 text-xs mb-3 font-display tracking-wide">屏東縣屏東市仁德路43巷6號</p>
+          <div className="h-px w-full max-w-xs bg-antique-gold/20 mx-auto mb-3"></div>
           <p className="text-ivory/40 text-[10px] tracking-widest uppercase italic font-display font-bold">© 2026 匠心藝境・時光肖像館. DESIGNED BY 蔓影蔓食. All rights reserved.</p>
         </div>
       </footer>
