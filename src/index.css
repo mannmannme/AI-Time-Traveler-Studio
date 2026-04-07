@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
 
 @theme {
   --font-sans: "Noto Serif TC", "Inter", sans-serif;
@@ -17,7 +17,10 @@
 }
 
 html, body {
-  @apply bg-ivory text-sepia antialiased font-sans relative overflow-x-hidden;
+  background-color: var(--color-ivory);
+  color: var(--color-sepia);
+  font-family: var(--font-sans);
+  @apply antialiased relative overflow-x-hidden;
   width: 100%;
   max-width: 100%;
 }
@@ -65,7 +68,7 @@ body::before {
 }
 
 .sepia-overlay {
-  background: rgba(112, 66, 20, 0.08);
+  background-color: rgba(112, 66, 20, 0.08);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -77,7 +80,7 @@ body::before {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--color-antique-gold);
+  background-color: var(--color-antique-gold);
   border-radius: 10px;
   opacity: 0.5;
 }
