@@ -1,4 +1,4 @@
-
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -262,10 +262,10 @@ export default function App() {
           break;
         }
 
-        // Balanced Segmented Generation Logic: Faster than 10s but safer than 2s
+        // Safer Segmented Generation Logic: Longer cooling periods to prevent 429 errors
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
-          let waitSeconds = isSegmentBreak ? 15 : 6; // Balanced at 15s/6s
+          let waitSeconds = isSegmentBreak ? 25 : 10; // Increased to 25s/10s for stability
           
           while (waitSeconds > 0 && !stopSignalRef.current) {
             setCoolingTime(waitSeconds);
@@ -573,27 +573,18 @@ export default function App() {
 
   const generateCollage = useCallback(async () => {
     const successfulPortraits = portraits.filter(p => p.status === 'success');
-    const count = successfulPortraits.length;
-    if (count < 1) return;
-
+    if (successfulPortraits.length < 6) return;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    // Dynamic layout: 2 columns for 1-4 images, 3 columns for 5+ images
-    const cols = count <= 4 ? 2 : 3;
-    const rows = Math.ceil(count / cols);
-
     const imgWidth = 1024;
     const imgHeight = Math.floor((imgWidth * 4) / 3);
     const paddingX = 60;
     const paddingY = 100;
     const headerHeight = 250;
     const footerHeight = 150;
-
-    canvas.width = (imgWidth * cols) + (paddingX * (cols + 1));
-    canvas.height = headerHeight + (imgHeight + paddingY) * rows + footerHeight;
-
+    canvas.width = (imgWidth * 3) + (paddingX * 4);
+    canvas.height = headerHeight + (imgHeight + paddingY) * 2 + footerHeight;
     ctx.fillStyle = '#fdfaf6';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#2c2c2c';
@@ -611,32 +602,27 @@ export default function App() {
       img.onload = () => resolve(img);
       img.src = url;
     });
-
     for (let i = 0; i < successfulPortraits.length; i++) {
       const img = await loadImg(successfulPortraits[i].url);
-      const row = Math.floor(i / cols);
-      const col = i % cols;
+      const row = Math.floor(i / 3);
+      const col = i % 3;
       const x = paddingX + col * (imgWidth + paddingX);
       const y = headerHeight + row * (imgHeight + paddingY);
-      
       ctx.fillStyle = '#ffffff';
       ctx.shadowColor = 'rgba(0,0,0,0.1)';
       ctx.shadowBlur = 20;
       ctx.fillRect(x - 10, y - 10, imgWidth + 20, imgHeight + 80);
       ctx.shadowBlur = 0;
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
-      
       ctx.fillStyle = '#2c2c2c';
       ctx.font = 'bold 35px "Noto Serif TC", serif';
       ctx.textAlign = 'center';
       ctx.fillText(successfulPortraits[i].style, x + imgWidth / 2, y + imgHeight + 50);
     }
-    
     ctx.fillStyle = '#888888';
     ctx.font = '35px "Playfair Display", "Noto Serif TC", serif';
     ctx.textAlign = 'center';
     ctx.fillText('Professional Time-Travel Portraits. Designed by 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
-    
     const collageUrl = canvas.toDataURL('image/jpeg', 0.95);
     downloadImage(collageUrl, 'portrait-collage.jpg');
   }, [portraits]);
@@ -811,7 +797,7 @@ export default function App() {
 
           <div className="flex-1 flex flex-col pt-2 md:pt-3">
             <div className="flex items-center justify-between mb-6"><h2 className="text-lg md:text-xl font-display font-bold text-dark-green flex items-center gap-2"><Grid className="w-5 h-5 text-antique-gold" />時光畫廊</h2>
-              {portraits.filter(p => p.status === 'success').length >= 1 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-display font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
+              {portraits.filter(p => p.status === 'success').length >= 6 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-display font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
             </div>
             {portraits.length === 0 && !isGenerating ? (
               <div className="w-full flex-grow min-h-[450px] flex flex-col items-center justify-center border-2 border-dashed border-antique-gold/20 rounded-[40px] bg-white/40"><ImageIcon className="w-16 h-16 mb-4 text-antique-gold/20" /><p className="text-xl font-display italic text-antique-gold/40">等待開啟時光之門</p></div>
