@@ -49,32 +49,32 @@ const STYLES: StyleConfig[] = [
   {
     name: "文藝復興 (Renaissance Majesty)",
     nameEn: "Renaissance Majesty",
-    prompt: "Generate a Renaissance-inspired portrait of the same person. Preserve the subject’s facial features, identity, gender, and ethnicity. Depict the subject in their most vibrant, elegant, and radiant state. Depict the subject as a noble figure wearing refined and elegant 16th-century European attire with tasteful fabric details. Styling: For men, include period-appropriate headwear like elegant velvet caps or berets, and a doublet with slashed sleeves. For women, maintain a lightweight and graceful aesthetic with intricate braided hair crowns, subtle jeweled accents, or delicate hair ornaments, strictly avoiding heavy or fully-covering hats to preserve an airy and elegant feel. Include high lace ruff collars where appropriate. Makeup: Natural Renaissance-style, matte skin, subtle earthy tones, defined but natural features, avoiding modern glossy or heavy cosmetics. The styling must be historically authentic and sophisticated, avoiding an overly cluttered or exaggerated look. Neutral facial expression, strictly no smiling, maintaining a serene and quiet classical art atmosphere. Style: Hyper-realistic but timeless, inspired by Renaissance portrait composition, soft chiaroscuro lighting, subtle and refined oil painting texture (soft sfumato finish), natural skin texture, no glossy fashion lighting, no heavy oil paint effect. Background: Deep, dark neutral backdrop with subtle depth. Composition: Tight half-body portrait where the subject appears very large and prominent, filling at least 85% of the vertical frame. Three-quarter view or slight side profile, calm and dignified posture, 3:4 vertical aspect ratio. Mood: Timeless, dignified, museum-quality realism. High resolution, refined detail, cinematic but restrained. Avoid modern fashion photography aesthetics and contemporary makeup. Strictly forbid all modern items and accessories, especially smartwatches, digital devices, or contemporary jewelry. Every element must be historically accurate to the 16th century."
+    prompt: "A Renaissance oil painting portrait. Preserve subject's identity, features, and gender. Subject as a 16th-century noble in elegant attire (men: doublet/velvet cap; women: graceful gown/braided hair). Style: Museum-quality realism, soft chiaroscuro, sfumato finish. Background: Dark neutral depth. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Timeless, dignified."
   },
   {
     name: "大正浪漫 (Taisho Romance)",
     nameEn: "Taisho Romance",
-    prompt: "A Taisho Roman–inspired portrait. Preserve the subject’s facial features, identity, gender, and ethnicity. Depict the subject in a dignified posture. Styling: For women, wearing elegant Taisho-era attire: a lace-collared blouse with a high-waisted striped hakama, or a patterned kimono with a high-collared blouse. For men, wearing a classic Taisho-era gakuran (student uniform), a formal kimono with haori and hakama, or a sharp Zhongshan suit (Sun Yat-sen suit) which was popular in this era, potentially with a retro flat cap or bowler hat. Style: Early 20th-century studio photography aesthetic, warm sepia-toned color palette, muted vintage tones, soft diffused lighting. Natural skin texture. Background: Traditional Japanese interior with shoji screens, vintage wooden furniture, and an antique clock. Accessories: The subject holds a classic folding fan or an open vintage book. Hair: Elegant Taisho-era hairstyle, such as soft waves or a refined updo with a simple vintage ribbon or pearl hairclip. Depict the subject in their most radiant, youthful prime with smooth, luminous skin and a vibrant, fresh appearance, radiating a sophisticated Taisho-era charm. Composition: Tight half-body portrait, subject very prominent, filling at least 85% of the frame. 3:4 vertical aspect ratio. Mood: Romantic, nostalgic, intellectual. CRITICAL: Ensure the subject maintains a slim and elegant silhouette; the kimono or hakama should be tailored to look refined and flattering, strictly avoiding any bloated or heavy appearance. Output: High resolution, ultra-detailed, museum-quality realism. Avoid anime, cosplay, modern fashion lighting, and heavy makeup. Strictly forbid all modern items (smartwatches, smartphones). Historically accurate to the Taisho era."
+    prompt: "A Taisho Roman studio portrait. Preserve subject's identity and features. Subject in elegant 1920s Japanese attire (women: hakama/kimono with lace; men: gakuran or formal kimono). Style: Vintage sepia-toned photography, soft diffused lighting. Background: Traditional Japanese interior. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Nostalgic, romantic, youthful prime."
   },
   {
     name: "好萊塢默片 (Silent Glamour)",
     nameEn: "Silent Glamour",
-    prompt: "Generate a glamorous late-1920s Hollywood studio portrait inspired by the golden age of silent cinema (1927–1929). Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Depict the subject in their most vibrant, elegant, and radiant state. Photography Style: Classic black and white film photography, high-contrast yet flattering lighting, soft cinematic chiaroscuro, directional studio key light, smooth tonal transitions, subtle natural film grain, no modern digital sharpness, no HDR effect. Hair & Styling: For women, authentic 1920s finger waves or soft Marcel waves. Elegant beaded flapper-style evening gown or silk evening dress. Optional opera gloves (black, ivory, or none). Classic pearl necklace or refined Art Deco jewelry. For men, a sharp 1920s tuxedo or a three-piece suit with a crisp white shirt, silk tie, and slicked-back hair in the style of a silent film star. Expression: Gentle closed-lip smile. Lips softly curved but teeth not visible. Warm yet poised gaze. Elegant and graceful presence. Dramatic but beautiful — not stern, not severe. Background: Dark velvet drapery or geometric Art Deco backdrop. Soft vignette edges. Authentic 1920s Hollywood studio ambiance. Composition: Tight upper-body portrait, subject filling at least 85% of the frame. Vertical 3:4 ratio. Centered cinematic framing. Mood: Glamorous, dramatic, refined, timeless, beautiful. Avoid wide smile, visible teeth, open mouth smile, exaggerated grin, harsh expression, overly modern fashion, HDR look, fashion magazine style lighting."
+    prompt: "A 1920s Hollywood silent film portrait. Preserve subject's identity and features. Style: Classic black and white, high-contrast chiaroscuro, natural film grain. Attire: 1920s glamour (women: flapper gown/waves; men: tuxedo/slicked hair). Expression: Gentle closed-lip smile. Composition: Tight upper-body, filling 85% of frame, 3:4 vertical. Mood: Dramatic, timeless elegance."
   },
   {
     name: "臺灣風華年代 (Formosa Radiance)",
     nameEn: "Formosa Radiance",
-    prompt: "Generate a portrait inspired by Taiwan in the 1970s. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Depict the subject as a confident and elegant urban figure from Taiwan’s golden era. Styling: For women, dressed in stylish 1970s attire such as a geometric-pattern blouse, high-waisted trousers, a retro dress, or flared pants. For men, a classic 1970s safari jacket, a polo shirt, or a retro patterned shirt with flared trousers and sideburns typical of the era. Style: Historical realism with a cinematic and nostalgic atmosphere, photorealistic yet timeless, inspired by 1970s Taiwanese films and vintage studio photography. Warm, natural lighting with soft shadows. Muted earthy tones such as caramel brown, mustard yellow, olive green, and brick red. Depict the subject in their most radiant, youthful prime with smooth, luminous skin and a vibrant, fresh appearance. Focus on capturing the subject's best possible appearance while maintaining high facial similarity. Hair: Lightweight and layered 1970s hairstyles. For women, prioritize fresh and flowing styles (e.g., soft long waves, a high ponytail, or a layered cut with natural movement) to avoid any heavy or stiff appearance. Makeup: Fresh and natural 1970s makeup with luminous skin. Focus on soft definition of features, strictly avoiding heavy foundation, dark eyeshadow, or thick eyeliner to maintain a youthful and clear aesthetic. Subtle film grain for authenticity. No exaggerated retro filters or sepia effects. No modern fashion aesthetics. Background: A quiet, empty streetscape background. Keep the background clean and avoid a cluttered row of signs; only a few authentic signs are needed for atmosphere. Use a beautiful shallow depth of field to naturally blur the background elements. Include authentic cultural elements such as scooters or old signboards. Accessories: A leather handbag or classic wristwatch. Composition: CRITICAL: This MUST be a tight half-body portrait. The subject MUST appear very large and prominent, filling at least 85-90% of the vertical space. The subject should be shown from the waist up, with the head and upper torso dominating the frame. Do not let the background streetscape overwhelm the subject; the person is the absolute focus. Elegant and confident posture, centered composition, vertical aspect ratio of 3:4. Mood: Warm, nostalgic, and refined—capturing the prosperity and cultural charm of Taiwan in the 1970s. Output: High resolution, ultra-detailed, photorealistic, cinematic quality. Avoid modern buildings, contemporary fashion, neon cyberpunk elements, heavy sepia filters, exaggerated retro styling, anime aesthetics, and futuristic objects. Add subtle 1970s film grain and warm Kodak color tones. Strictly forbid all modern items and accessories, especially smartwatches, smartphones, or digital devices. Every element must be historically accurate to the 1970s. Ensure background text is blurred and illegible."
+    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: Quiet 1970s streetscape, beautiful shallow depth of field. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Warm, nostalgic."
   },
   {
     name: "當代時尚 (Contemporary Fashion)",
     nameEn: "Contemporary Fashion",
-    prompt: "Generate a contemporary high-fashion portrait with a luxury brand campaign aesthetic. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Depict the subject in their most vibrant, elegant, and radiant state. Style: Contemporary Luxury Fashion — Timeless Elegance, Modern Prestige. Modern luxury brand ambassador presence. Refined, confident, quietly powerful. The subject should feel like the face of a premium fashion house or international luxury campaign. subtle cinematic depth, quiet star aura, international luxury advertisement tone Wardrobe: High-fashion luxury styling with couture-inspired details. For women, options such as: 1) Designer evening gown or modern minimalist couture dress; 2) Sharp tailored luxury pantsuit or sophisticated high-waisted trousers with a structured designer top; 3) Elegant eveningwear with refined draping or subtle statement silhouettes. For men, sharp tailored designer suits, premium luxury knitwear, or sophisticated high-fashion outerwear with clean lines. Fabrics may include silk, satin, velvet, chiffon, or premium textured materials. Avoid standard corporate suits or plain business blazers. Avoid conservative office styling. Color palette: Champagne, ivory, deep black, midnight navy, metallic accents, soft gold, rich neutral tones. Details: Subtle embroidery, refined embellishment, couture-inspired trims, elegant draping, layered luxury jewelry. Outfit should feel like a luxury campaign or red-carpet editorial moment. The outfit should feel like a luxury fashion house runway or premium international brand advertisement. Hair: Modern elegant styling with natural sophistication. Makeup: Extremely natural, 'no-makeup' look with luminous skin and a soft editorial glow. Very light refined eye definition. Soft neutral or rose-toned lips. Fresh, sophisticated, and modern elegance. Strictly avoid heavy eyeliner, dramatic contouring, dark eyeshadow, or any makeup that looks thick or aged. Lighting: Soft diffused luxury lighting. Dimensional but clean. Subtle highlights and gentle shadow depth. High-end campaign quality. Expression: Confident, composed. Gentle closed-lip smile. No visible teeth. Magnetic yet understated presence. Background: Minimalist upscale interior, architectural modern space, or softly blurred luxury environment. Clean and elegant. Composition: Prominent half-body portrait. The subject should be very large and occupy at least 85% of the vertical frame, ensuring a clear and detailed view of the person. Avoid small or distant subject placement. Editorial framing. Vertical 3:4 ratio. Magazine-quality finish. Mood: Luxury brand campaign. Understated prestige. Modern icon energy. Image Quality: Ultra high resolution. Realistic skin tones. Detailed fabric and jewelry texture. Premium editorial polish. Important: No text, no typography, no logos, no watermarks."
+    prompt: "A modern luxury fashion campaign portrait. Preserve subject's identity and features. Style: High-end editorial, timeless prestige, international advertisement aesthetic. Attire: Sophisticated designer couture (minimalist gowns or sharp tailored suits). Lighting: Soft diffused luxury studio lighting. Background: Minimalist upscale architectural space. Composition: Prominent half-body, filling 85% of frame, 3:4 vertical. Mood: Confident, quietly powerful, modern icon."
   },
   {
     name: "未來紀元 (Future Epoch)",
     nameEn: "Future Epoch",
-    prompt: "The Age of Intelligent Elegance. Futuristic portrait of a refined individual within an advanced architectural environment overlooking a luminous intelligent city. Preserve the subject’s facial features, identity, gender, and ethnicity from the reference image. Depict the subject in their most vibrant, elegant, and radiant state. Structured sculptural couture with clean geometric lines and high-tech refined fabric. Minimalist futuristic tailoring in pearl white, graphite black, deep navy, or silver-grey. The attire should be elegant and human-centered, suitable for both men and women. Subtle metallic accents integrated into the design. No armor, no heavy embellishment. Expansive intelligent architectural space with soft ambient blue-white glow. Clean futuristic interior, panoramic depth, subtle holographic atmosphere integrated into the environment. Technology should feel natural and seamlessly embedded in the space. Calm authoritative presence, upright confident posture, composed and visionary expression. Soft cool lighting with cinematic clarity. Luxury future aesthetic, human-centered civilization, sophisticated, refined, elevated. No cyberpunk, no robotic implants, no mechanical limbs, no aggressive neon, no dystopian elements. Vertical aspect ratio 3:4."
+    prompt: "A futuristic portrait of intelligent elegance. Preserve subject's identity and features. Style: Advanced luxury future aesthetic, clean cinematic clarity. Attire: Sculptural minimalist couture with geometric lines. Background: Panoramic intelligent architectural space with ambient glow. Composition: Half-body, 3:4 vertical. Mood: Visionary, refined."
   }
 ];
 
@@ -282,7 +282,7 @@ export default function App() {
         // Cooling Logic
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
-          let waitSeconds = isSegmentBreak ? 10 : 5;
+          let waitSeconds = isSegmentBreak ? 7 : 3;
           
           while (waitSeconds > 0 && !stopSignalRef.current) {
             setCoolingTime(waitSeconds);
@@ -302,14 +302,10 @@ export default function App() {
           try {
             const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
             const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
-            ${additionalDesc ? `Additional user request: ${additionalDesc}` : ''}
-            CRITICAL: Aesthetic beauty is the top priority. The output must be visually stunning and elegant.
-            CRITICAL: Preserve the person's exact facial identity, features, expression, and ethnicity. 
-            CRITICAL: Strictly maintain the person's original gender (${gender}).
-            CRITICAL: Preserve the subject's original age. Avoid any visual effects that make the subject look older.
-            CRITICAL: Maintain the person's original body type and weight.
-            ${isHistorical ? `CRITICAL: Ensure a clean historical look. NO modern technology (cameras, smartwatches, modern glasses).` : ''}
-            Output a high-resolution, photorealistic portrait. Aspect ratio: 3:4.`;
+            ${additionalDesc ? `User request: ${additionalDesc}` : ''}
+            Requirements: Preserve facial identity, features, and original gender (${gender}). Maintain original age and body type. 
+            ${isHistorical ? `Historical accuracy: No modern technology.` : ''}
+            High-resolution photorealistic portrait, 3:4 ratio.`;
 
             const response = await ai.models.generateContent({
               model: modelName,
@@ -407,9 +403,16 @@ export default function App() {
   };
 
   const refinePortrait = async () => {
-    if (!refiningPortraitId || !refinementPrompt) return;
+    console.log("Refine Portrait started", { refiningPortraitId, refinementPrompt });
+    if (!refiningPortraitId || !refinementPrompt) {
+      console.warn("Missing refiningPortraitId or refinementPrompt");
+      return;
+    }
     const targetPortrait = portraits.find(p => p.id === refiningPortraitId);
-    if (!targetPortrait) return;
+    if (!targetPortrait) {
+      console.error("Target portrait not found", refiningPortraitId);
+      return;
+    }
 
     setIsGenerating(true);
     setProgress(0);
@@ -423,14 +426,13 @@ export default function App() {
       return;
     }
 
-    const ai = new GoogleGenAI({ apiKey });
-    const model = "gemini-3.1-flash-image-preview";
-    
     try {
+      console.log("Converting blob URL to base64...");
       const { base64: base64Data, mimeType } = await blobUrlToBase64(targetPortrait.url);
 
       let markupBase64 = null;
       if (canvasRef.current && paths.length > 0) {
+        console.log("Capturing canvas markup...");
         markupBase64 = canvasRef.current.toDataURL('image/png').split(',')[1];
       }
 
@@ -439,28 +441,30 @@ export default function App() {
         parts.push({ inlineData: { data: markupBase64, mimeType: 'image/png' } });
       }
 
-      parts.push({
-        text: `Refine this portrait based on the following request: ${refinementPrompt}. 
-        Maintain the exact same style (${targetPortrait.styleEn}), background, and composition of the original image. 
-        Only modify the specific elements requested. 
-        CRITICAL: Aesthetic beauty and elegance are the top priorities.
-        CRITICAL: Preserve the person's exact facial identity, features, and expression.
-        CRITICAL: The subject MUST NOT look older or heavier than the reference image. Strictly avoid any aging, weight gain, or bloating effects. Maintain the original body shape.
-        Output a high-resolution, photorealistic portrait. 
-        Aspect ratio: 3:4 (Portrait).`,
-      });
+      const refinePromptText = `Refine this portrait: ${refinementPrompt}. 
+      Maintain the same style (${targetPortrait.styleEn}), background, and composition. 
+      Only modify requested elements. Preserve facial identity.
+      Aesthetic beauty is priority. No aging or weight gain.
+      Output: High-resolution photorealistic portrait, 3:4 ratio.`;
 
+      parts.push({ text: refinePromptText });
+
+      console.log("Calling Gemini API for refinement...");
+      const ai = new GoogleGenAI({ apiKey });
+      const model = "gemini-3.1-flash-image-preview";
+      
       const response = await ai.models.generateContent({
         model: model,
         contents: { parts: parts },
         config: {
           imageConfig: {
             aspectRatio: "3:4", 
-            imageSize: resolution as any
+            imageSize: "1K"
           }
         }
       });
 
+      console.log("API response received");
       let imageUrl = "";
       const responseParts = response.candidates?.[0]?.content?.parts || [];
       for (const part of responseParts) {
@@ -471,11 +475,16 @@ export default function App() {
       }
 
       if (imageUrl) {
+        console.log("New image URL created, updating portraits...");
         setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, url: imageUrl, status: 'success' } : p));
         setRefiningPortraitId(null);
         setRefinementPrompt('');
+        setPaths([]);
+      } else {
+        throw new Error("API did not return an image.");
       }
     } catch (err: any) {
+      console.error("Refinement error:", err);
       setError(err.message || "修改過程中發生錯誤。");
     } finally {
       setIsGenerating(false);
@@ -585,7 +594,7 @@ export default function App() {
     ctx.font = '40px "Playfair Display", "Noto Serif TC", serif';
     ctx.fillStyle = '#888888';
     // @ts-ignore - letterSpacing is supported in modern browsers
-    ctx.letterSpacing = '12px';
+    ctx.letterSpacing = '2px';
     ctx.fillText('TRAVEL THROUGH TIME AND DISCOVER YOURSELF', canvas.width / 2, 205);
     // @ts-ignore
     ctx.letterSpacing = '0px'; // Reset for other text
@@ -803,10 +812,11 @@ export default function App() {
               {isGenerating && (
                 <button 
                   onClick={handleStopGeneration} 
-                  className="w-full mt-2 h-10 rounded-xl font-display font-bold text-sepia/60 hover:text-sepia border border-sepia/10 hover:bg-sepia/5 transition-all flex items-center justify-center gap-2 text-sm"
+                  disabled={shouldStop}
+                  className={`w-full mt-2 h-10 rounded-xl font-display font-bold transition-all flex items-center justify-center gap-2 text-sm ${shouldStop ? 'bg-stone-100 text-stone-400' : 'text-sepia/60 hover:text-sepia border border-sepia/10 hover:bg-sepia/5'}`}
                 >
-                  <X className="w-4 h-4" />
-                  <span>停止生成 (Stop)</span>
+                  {shouldStop ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                  <span>{shouldStop ? '正在停止 (Stopping...)' : '停止生成 (Stop)'}</span>
                 </button>
               )}
 
