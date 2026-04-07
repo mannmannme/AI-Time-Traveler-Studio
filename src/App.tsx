@@ -145,11 +145,17 @@ export default function App() {
     });
   };
 
-  // --- Helper: Resize Image ---
+  // --- Helper: Resize Image with Timeout ---
   const resizeImage = (base64: string, maxWidth = 1024, maxHeight = 1024): Promise<string> => {
     return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        console.warn("Resize timeout, using original image");
+        resolve(base64);
+      }, 5000);
+
       const img = new Image();
       img.onload = () => {
+        clearTimeout(timeout);
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
@@ -163,7 +169,10 @@ export default function App() {
         if (ctx) { ctx.drawImage(img, 0, 0, width, height); resolve(canvas.toDataURL('image/jpeg', 0.85)); }
         else { resolve(base64); }
       };
-      img.onerror = () => resolve(base64);
+      img.onerror = () => {
+        clearTimeout(timeout);
+        resolve(base64);
+      };
       img.src = base64;
     });
   };
@@ -244,13 +253,16 @@ export default function App() {
 
     try {
       const ai = new GoogleGenAI({ apiKey });
-      const model = "gemini-3.1-flash-image-preview";
+      const modelName = "gemini-3.1-flash-image-preview";
       
+      // 1. Resize image with safety check
       const resizedImage = await resizeImage(sourceImage);
-      if (stopSignalRef.current) { setIsGenerating(false); return; }
+      if (stopSignalRef.current) throw new Error("USER_STOPPED");
+      
       const base64Data = resizedImage.split(',')[1];
       const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
 
+      // 2. Filter styles
       const stylesToGenerate = STYLES.filter(s => selectedStyleIds.includes(s.nameEn));
       const totalStyles = stylesToGenerate.length;
       
@@ -259,20 +271,18 @@ export default function App() {
         setIsGenerating(false);
         return;
       }
+      
       let completedCount = 0;
-
       console.log("Starting generation for styles:", stylesToGenerate.map(s => s.nameEn));
 
+      // 3. Generation Loop
       for (const style of stylesToGenerate) {
-        if (stopSignalRef.current) {
-          console.log("Generation stopped by user.");
-          break;
-        }
+        if (stopSignalRef.current) break;
 
-        // Balanced Segmented Generation Logic: Faster and stable
+        // Cooling Logic
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
-          let waitSeconds = isSegmentBreak ? 10 : 5; // Balanced at 10s/5s
+          let waitSeconds = isSegmentBreak ? 10 : 5;
           
           while (waitSeconds > 0 && !stopSignalRef.current) {
             setCoolingTime(waitSeconds);
@@ -285,27 +295,24 @@ export default function App() {
         if (stopSignalRef.current) break;
 
         let attempts = 0;
-        const maxAttempts = 3; // Increased attempts
+        const maxAttempts = 2; 
         let success = false;
 
-        while (attempts < maxAttempts && !success) {
+        while (attempts < maxAttempts && !success && !stopSignalRef.current) {
           try {
-            console.log(`Generating style: ${style.nameEn} (Attempt ${attempts + 1})`);
             const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
-            
             const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
             ${additionalDesc ? `Additional user request: ${additionalDesc}` : ''}
             CRITICAL: Aesthetic beauty is the top priority. The output must be visually stunning and elegant.
             CRITICAL: Preserve the person's exact facial identity, features, expression, and ethnicity. 
-            CRITICAL: Strictly maintain the person's original gender (${gender}). If the photo is male, the output MUST be male. If female, the output MUST be female.
-            CRITICAL: Preserve the subject's original age from the reference image, but ensure they are depicted in their most elegant, fresh, and vibrant state for that age. Strictly avoid any visual effects that make the subject look older than the reference (e.g., deepening wrinkles, sagging skin, or aged hairstyles). The goal is a sophisticated and aesthetically beautiful portrait.
-            CRITICAL: The subject MUST NOT look heavier or thicker than the reference image. Maintain the person's original body type, physique, and overall weight. If the reference image is a headshot, infer a proportionate and elegant body type consistent with the subject's facial features and gender. Strictly avoid any bloating or distortion of the subject's figure.
-            ${isHistorical ? `CRITICAL: Ensure a clean historical look. The subject should NOT be wearing or holding any modern technology (no cameras, no smartwatches, no fitness trackers, no modern glasses). Focus on period-accurate attire and accessories.` : 'Maintain the aesthetic and stylistic authenticity of the chosen style.'}
-            Output a high-resolution, photorealistic portrait suitable for professional and commercial use. 
-            Aspect ratio: 3:4 (Portrait).`;
+            CRITICAL: Strictly maintain the person's original gender (${gender}).
+            CRITICAL: Preserve the subject's original age. Avoid any visual effects that make the subject look older.
+            CRITICAL: Maintain the person's original body type and weight.
+            ${isHistorical ? `CRITICAL: Ensure a clean historical look. NO modern technology (cameras, smartwatches, modern glasses).` : ''}
+            Output a high-resolution, photorealistic portrait. Aspect ratio: 3:4.`;
 
             const response = await ai.models.generateContent({
-              model: model,
+              model: modelName,
               contents: {
                 parts: [
                   { inlineData: { data: base64Data, mimeType: mimeType } },
@@ -313,81 +320,43 @@ export default function App() {
                 ]
               },
               config: {
-                imageConfig: {
-                  aspectRatio: "3:4", 
-                  imageSize: "1K"
-                }
+                imageConfig: { aspectRatio: "3:4", imageSize: "1K" }
               }
             });
 
-            let imageUrl = "";
-            const candidates = response.candidates || [];
-            
-            if (candidates.length === 0) {
-              const errorMsg = "內容因安全過濾被阻擋 (Safety Block)";
-              console.warn(`No candidates returned for ${style.nameEn}. ${errorMsg}`);
-              setPortraits(prev => [...prev, {
-                id: Math.random().toString(36).substr(2, 9),
-                style: style.name,
-                styleEn: style.nameEn,
-                url: "",
-                prompt: style.prompt,
-                status: 'error',
-                errorMsg: errorMsg
-              }]);
-              success = true; 
-              continue;
-            }
+            if (stopSignalRef.current) break;
 
-            const parts = candidates[0].content?.parts || [];
-            for (const part of parts) {
-              if (part.inlineData) {
-                imageUrl = base64ToBlobUrl(part.inlineData.data, 'image/png');
-                break;
+            const candidates = response.candidates || [];
+            if (candidates.length > 0) {
+              const parts = candidates[0].content?.parts || [];
+              let imageUrl = "";
+              for (const part of parts) {
+                if (part.inlineData) {
+                  imageUrl = base64ToBlobUrl(part.inlineData.data, 'image/png');
+                  break;
+                }
+              }
+
+              if (imageUrl) {
+                setPortraits(prev => [...prev, {
+                  id: Math.random().toString(36).substr(2, 9),
+                  style: style.name,
+                  styleEn: style.nameEn,
+                  url: imageUrl,
+                  prompt: style.prompt,
+                  status: 'success'
+                }]);
+                success = true;
               }
             }
+            
+            if (!success) throw new Error("Empty response");
 
-            if (imageUrl) {
-              const portrait: GeneratedPortrait = {
-                id: Math.random().toString(36).substr(2, 9),
-                style: style.name,
-                styleEn: style.nameEn,
-                url: imageUrl,
-                prompt: style.prompt,
-                caption: "",
-                status: 'success'
-              };
-              setPortraits(prev => [...prev, portrait]);
-              success = true;
-              console.log(`Successfully generated ${style.nameEn}`);
-            } else {
-              const errorMsg = "模型未傳回圖片數據";
-              console.warn(`${errorMsg} for ${style.nameEn}`);
-              setPortraits(prev => [...prev, {
-                id: Math.random().toString(36).substr(2, 9),
-                style: style.name,
-                styleEn: style.nameEn,
-                url: "",
-                prompt: style.prompt,
-                status: 'error',
-                errorMsg: errorMsg
-              }]);
-              success = true;
-            }
           } catch (err: any) {
+            if (stopSignalRef.current) break;
             attempts++;
-            console.error(`Error generating ${style.nameEn} (Attempt ${attempts}):`, err);
-            
-            const isRateLimit = err.message?.includes("429") || err.status === 429;
-            
-            if (attempts < maxAttempts) {
-              const waitTime = isRateLimit ? 20000 : 5000;
-              console.log(`Waiting ${waitTime}ms before retry...`);
-              await new Promise(resolve => setTimeout(resolve, waitTime));
-            } else {
-              const errorMsg = isRateLimit 
-                ? "API 請求過於頻繁 (Rate Limit)，請稍候再試或檢查配額" 
-                : (err.message || "生成失敗");
+            console.error(`Error generating ${style.nameEn}:`, err);
+            if (attempts >= maxAttempts) {
               setPortraits(prev => [...prev, {
                 id: Math.random().toString(36).substr(2, 9),
                 style: style.name,
@@ -395,20 +364,25 @@ export default function App() {
                 url: "",
                 prompt: style.prompt,
                 status: 'error',
-                errorMsg: errorMsg
+                errorMsg: err.message || "生成失敗"
               }]);
-              success = true; 
+            } else {
+              await new Promise(resolve => setTimeout(resolve, 5000));
             }
           }
         }
+        
         completedCount++;
         setProgress((completedCount / totalStyles) * 100);
       }
     } catch (err: any) {
-      console.error("Fatal error in generation loop:", err);
-      setError(err.message || "生成過程中發生錯誤。");
+      if (err.message !== "USER_STOPPED") {
+        console.error("Fatal error:", err);
+        setError(err.message || "生成過程中發生錯誤。");
+      }
     } finally {
       setIsGenerating(false);
+      setCoolingTime(0);
     }
   };
 
