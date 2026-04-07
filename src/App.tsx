@@ -33,6 +33,8 @@ interface GeneratedPortrait {
   url: string;
   prompt: string;
   caption?: string;
+  status?: 'success' | 'error';
+  errorMsg?: string;
 }
 
 interface StyleConfig {
@@ -260,10 +262,10 @@ export default function App() {
           break;
         }
 
-        // Segmented Generation Logic: Add cooling periods
+        // Optimized Segmented Generation Logic: Shorter cooling periods for better speed
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
-          let waitSeconds = isSegmentBreak ? 15 : 5;
+          let waitSeconds = isSegmentBreak ? 5 : 2; // Reduced from 15/5 to 5/2
           
           while (waitSeconds > 0 && !stopSignalRef.current) {
             setCoolingTime(waitSeconds);
@@ -315,8 +317,18 @@ export default function App() {
             const candidates = response.candidates || [];
             
             if (candidates.length === 0) {
-              console.warn(`No candidates returned for ${style.nameEn}. This might be a safety block.`);
-              success = true; // Skip if safety block
+              const errorMsg = "內容因安全過濾被阻擋 (Safety Block)";
+              console.warn(`No candidates returned for ${style.nameEn}. ${errorMsg}`);
+              setPortraits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                style: style.name,
+                styleEn: style.nameEn,
+                url: "",
+                prompt: style.prompt,
+                status: 'error',
+                errorMsg: errorMsg
+              }]);
+              success = true; 
               continue;
             }
 
@@ -335,13 +347,24 @@ export default function App() {
                 styleEn: style.nameEn,
                 url: imageUrl,
                 prompt: style.prompt,
-                caption: ""
+                caption: "",
+                status: 'success'
               };
               setPortraits(prev => [...prev, portrait]);
               success = true;
               console.log(`Successfully generated ${style.nameEn}`);
             } else {
-              console.warn(`No image data in response for ${style.nameEn}`);
+              const errorMsg = "模型未傳回圖片數據";
+              console.warn(`${errorMsg} for ${style.nameEn}`);
+              setPortraits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                style: style.name,
+                styleEn: style.nameEn,
+                url: "",
+                prompt: style.prompt,
+                status: 'error',
+                errorMsg: errorMsg
+              }]);
               success = true;
             }
           } catch (err: any) {
@@ -349,14 +372,22 @@ export default function App() {
             console.error(`Error generating ${style.nameEn} (Attempt ${attempts}):`, err);
             
             if (attempts < maxAttempts) {
-              // Handle 429 (Rate Limit) with a longer wait
               const isRateLimit = err.message?.includes("429") || err.status === 429;
               const waitTime = isRateLimit ? 10000 : 3000;
               console.log(`Waiting ${waitTime}ms before retry...`);
               await new Promise(resolve => setTimeout(resolve, waitTime));
             } else {
-              console.error(`Failed to generate ${style.nameEn} after ${maxAttempts} attempts.`);
-              success = true; // Move to next style after max attempts
+              const errorMsg = err.message || "生成失敗";
+              setPortraits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                style: style.name,
+                styleEn: style.nameEn,
+                url: "",
+                prompt: style.prompt,
+                status: 'error',
+                errorMsg: errorMsg
+              }]);
+              success = true; 
             }
           }
         }
@@ -456,7 +487,7 @@ export default function App() {
       }
 
       if (imageUrl) {
-        setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, url: imageUrl } : p));
+        setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, url: imageUrl, status: 'success' } : p));
         setRefiningPortraitId(null);
         setRefinementPrompt('');
       }
@@ -538,7 +569,8 @@ export default function App() {
   };
 
   const generateCollage = useCallback(async () => {
-    if (portraits.length < 6) return;
+    const successfulPortraits = portraits.filter(p => p.status === 'success');
+    if (successfulPortraits.length < 6) return;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -567,8 +599,8 @@ export default function App() {
       img.onload = () => resolve(img);
       img.src = url;
     });
-    for (let i = 0; i < portraits.length; i++) {
-      const img = await loadImg(portraits[i].url);
+    for (let i = 0; i < successfulPortraits.length; i++) {
+      const img = await loadImg(successfulPortraits[i].url);
       const row = Math.floor(i / 3);
       const col = i % 3;
       const x = paddingX + col * (imgWidth + paddingX);
@@ -582,7 +614,7 @@ export default function App() {
       ctx.fillStyle = '#2c2c2c';
       ctx.font = 'bold 35px "Noto Serif TC", serif';
       ctx.textAlign = 'center';
-      ctx.fillText(portraits[i].style, x + imgWidth / 2, y + imgHeight + 50);
+      ctx.fillText(successfulPortraits[i].style, x + imgWidth / 2, y + imgHeight + 50);
     }
     ctx.fillStyle = '#888888';
     ctx.font = '35px "Playfair Display", "Noto Serif TC", serif';
@@ -762,7 +794,7 @@ export default function App() {
 
           <div className="flex-1 flex flex-col pt-2 md:pt-3">
             <div className="flex items-center justify-between mb-6"><h2 className="text-lg md:text-xl font-display font-bold text-dark-green flex items-center gap-2"><Grid className="w-5 h-5 text-antique-gold" />時光畫廊</h2>
-              {portraits.length >= 6 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-display font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
+              {portraits.filter(p => p.status === 'success').length >= 6 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-display font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
             </div>
             {portraits.length === 0 && !isGenerating ? (
               <div className="w-full flex-grow min-h-[450px] flex flex-col items-center justify-center border-2 border-dashed border-antique-gold/20 rounded-[40px] bg-white/40"><ImageIcon className="w-16 h-16 mb-4 text-antique-gold/20" /><p className="text-xl font-display italic text-antique-gold/40">等待開啟時光之門</p></div>
@@ -771,20 +803,41 @@ export default function App() {
                 <AnimatePresence mode="popLayout">
                   {portraits.map((portrait, idx) => (
                     <motion.div key={portrait.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.1 }} className="group relative">
-                      <div className="nostalgic-border bg-white rounded-sm overflow-hidden shadow-xl hover:shadow-2xl transition-all"><div className="aspect-[3/4] relative overflow-hidden">
-                          <img src={portrait.url} alt={portrait.style} className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110" />
-                          <div className="absolute inset-0 bg-dark-green/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                            <button onClick={() => setPreviewImageUrl(portrait.url)} className="bg-white/90 p-3 rounded-full shadow-lg"><Maximize className="w-6 h-6 text-dark-green" /></button>
-                            <button onClick={(e) => { e.stopPropagation(); setRefiningPortraitId(portrait.id); }} className="bg-white/90 p-3 rounded-full shadow-lg"><Edit3 className="w-6 h-6 text-dark-green" /></button>
-                          </div>
-                          <button onClick={(e) => { 
-                            e.stopPropagation(); 
-                            const slug = portrait.styleEn.toLowerCase().replace(/ /g, '-');
-                            const stylePortraits = portraits.filter(p => p.styleEn === portrait.styleEn);
-                            const index = stylePortraits.findIndex(p => p.id === portrait.id) + 1;
-                            downloadImage(portrait.url, `portrait-${slug}-${index}.jpg`); 
-                          }} className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow-md opacity-0 group-hover:opacity-100"><Download className="w-4 h-4" /></button>
-                        </div><div className="p-4 text-center border-t border-antique-gold/10 bg-ivory/50"><p className="font-display font-bold text-dark-green text-sm leading-tight">{portrait.style}</p></div></div>
+                      <div className="nostalgic-border bg-white rounded-sm overflow-hidden shadow-xl hover:shadow-2xl transition-all">
+                        <div className="aspect-[3/4] relative overflow-hidden bg-stone-50">
+                          {portrait.status === 'error' ? (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-red-50/50">
+                              <X className="w-12 h-12 text-red-300 mb-3" />
+                              <p className="text-xs font-display font-bold text-red-800/60 leading-relaxed">
+                                {portrait.errorMsg || "生成失敗"}
+                              </p>
+                              <p className="mt-2 text-[10px] text-red-800/30 italic">
+                                請嘗試更換照片或調整說明
+                              </p>
+                            </div>
+                          ) : (
+                            <>
+                              <img src={portrait.url} alt={portrait.style} className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110" />
+                              <div className="absolute inset-0 bg-dark-green/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                <button onClick={() => setPreviewImageUrl(portrait.url)} className="bg-white/90 p-3 rounded-full shadow-lg"><Maximize className="w-6 h-6 text-dark-green" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); setRefiningPortraitId(portrait.id); }} className="bg-white/90 p-3 rounded-full shadow-lg"><Edit3 className="w-6 h-6 text-dark-green" /></button>
+                              </div>
+                              <button onClick={(e) => { 
+                                e.stopPropagation(); 
+                                const slug = portrait.styleEn.toLowerCase().replace(/ /g, '-');
+                                const stylePortraits = portraits.filter(p => p.styleEn === portrait.styleEn);
+                                const index = stylePortraits.findIndex(p => p.id === portrait.id) + 1;
+                                downloadImage(portrait.url, `portrait-${slug}-${index}.jpg`); 
+                              }} className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow-md opacity-0 group-hover:opacity-100"><Download className="w-4 h-4" /></button>
+                            </>
+                          )}
+                        </div>
+                        <div className="p-4 text-center border-t border-antique-gold/10 bg-ivory/50">
+                          <p className={`font-display font-bold text-sm leading-tight ${portrait.status === 'error' ? 'text-red-800/40' : 'text-dark-green'}`}>
+                            {portrait.style}
+                          </p>
+                        </div>
+                      </div>
                     </motion.div>
                   ))}
                   {isGenerating && Array.from({ length: Math.max(0, selectedStyleIds.length - portraits.length) }).map((_, i) => (
