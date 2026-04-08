@@ -792,7 +792,7 @@ export default function App() {
       <header className="bg-ivory border-b border-antique-gold/20 py-10 px-4 text-center relative">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto">
           <h1 className="text-3xl md:text-6xl font-display font-bold text-dark-green mb-4 tracking-tight">匠心藝境・時光肖像館</h1>
-          <p className="text-antique-gold text-base md:text-xl tracking-[0.3em] font-elegant">TRAVEL THROUGH TIME AND DISCOVER YOURSELF</p>
+          <p className="text-antique-gold text-base md:text-xl tracking-[0.4em] font-elegant font-bold">TRAVEL THROUGH TIME AND DISCOVER YOURSELF</p>
           <div className="flex items-center justify-center gap-3 my-4"><div className="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent via-antique-gold/60 to-transparent"></div><div className="w-2 h-2 rotate-45 border border-antique-gold/60"></div><div className="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent via-antique-gold/60 to-transparent"></div></div>
           <p className="text-sepia/80 font-elegant text-lg md:text-xl italic">"Professional Time-Travel Portrait Generator"</p>
         </motion.div>
