@@ -54,7 +54,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "大正浪漫 (Taisho Romance)",
     nameEn: "Taisho Romance",
-    prompt: "A Taisho Roman studio portrait. Preserve subject's identity and features. Subject in elegant 1920s Japanese attire (women: hakama/kimono with lace; men: gakuran or formal kimono). Style: Vintage sepia-toned photography, soft diffused lighting. Background: Traditional Japanese interior. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Nostalgic, romantic, youthful prime."
+    prompt: "A Taisho Roman studio portrait. Preserve subject's identity and features. Subject in elegant 1920s Japanese attire (women: hakama/kimono with lace; men: gakuran or formal kimono). Hair & Appearance: If the subject is young, strictly avoid middle-aged bun hairstyles; instead, depict as a youthful 'Haicara' (modern girl/college student) with flowing hair or ribbons to enhance beauty. Style: Vintage sepia-toned photography, soft diffused lighting. Background: Traditional Japanese interior. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Nostalgic, romantic, youthful prime."
   },
   {
     name: "好萊塢默片 (Silent Glamour)",
@@ -64,7 +64,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "臺灣風華年代 (Formosa Radiance)",
     nameEn: "Formosa Radiance",
-    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: Quiet 1970s streetscape, beautiful shallow depth of field. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Warm, nostalgic."
+    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: A nostalgic 1970s sidewalk or pedestrian area with vintage shop signs, beautiful shallow depth of field. Ensure subject is not in the middle of a vehicle lane. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Warm, nostalgic."
   },
   {
     name: "當代時尚 (Contemporary Fashion)",
@@ -499,6 +499,83 @@ export default function App() {
     } catch (err: any) {
       console.error("Refinement error:", err);
       setError(err.message || "修改過程中發生錯誤。");
+    } finally {
+      setIsRefining(false);
+    }
+  };
+
+  const regeneratePortrait = async () => {
+    if (!refiningPortraitId || !sourceImage) return;
+    const targetPortrait = portraits.find(p => p.id === refiningPortraitId);
+    if (!targetPortrait) return;
+
+    const style = STYLES.find(s => s.nameEn === targetPortrait.styleEn);
+    if (!style) return;
+
+    setIsRefining(true);
+    setError(null);
+    
+    // Update portrait status to refining
+    setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'refining' } : p));
+
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || manualApiKey;
+    if (!apiKey) {
+      setError("找不到 API 金鑰。");
+      setIsRefining(false);
+      return;
+    }
+
+    try {
+      const ai = new GoogleGenAI({ apiKey });
+      const modelName = "gemini-3.1-flash-image-preview";
+      const resizedImage = await resizeImage(sourceImage);
+      const base64Data = resizedImage.split(',')[1];
+      const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
+
+      const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
+      const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
+      ${additionalDesc ? `User request: ${additionalDesc}` : ''}
+      Requirements: Preserve facial identity, features, and original gender (${gender}). Maintain original age and body type. 
+      ${isHistorical ? `Historical accuracy: No modern technology.` : ''}
+      High-resolution photorealistic portrait, 3:4 ratio.`;
+
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: {
+          parts: [
+            { inlineData: { data: base64Data, mimeType: mimeType } },
+            { text: promptText }
+          ]
+        },
+        config: {
+          imageConfig: { aspectRatio: "3:4", imageSize: "1K" }
+        }
+      });
+
+      const candidates = response.candidates || [];
+      if (candidates.length > 0) {
+        const parts = candidates[0].content?.parts || [];
+        let imageUrl = "";
+        for (const part of parts) {
+          if (part.inlineData) {
+            imageUrl = base64ToBlobUrl(part.inlineData.data, 'image/png');
+            break;
+          }
+        }
+
+        if (imageUrl) {
+          setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, url: imageUrl, status: 'success' } : p));
+          setRefiningPortraitId(null);
+          setRefinementPrompt('');
+          setPaths([]);
+        } else {
+          throw new Error("API did not return an image.");
+        }
+      }
+    } catch (err: any) {
+      console.error("Regeneration error:", err);
+      setError(err.message || "重新生成過程中發生錯誤。");
+      setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'error', errorMsg: err.message } : p));
     } finally {
       setIsRefining(false);
     }
@@ -987,9 +1064,20 @@ export default function App() {
                         <label className="block text-sm font-display font-bold text-dark-green mb-2">修改指令 (Refinement Request)</label>
                         <textarea value={refinementPrompt} onChange={(e) => setRefinementPrompt(e.target.value)} placeholder="例如：更換髮型、更改衣服顏色、移除物件..." className="w-full p-4 bg-white border border-antique-gold/20 rounded-2xl text-base h-48 text-stone-700 font-display font-bold" />
                       </div>
-                      <button disabled={!refinementPrompt || isRefining} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-display font-bold transition-all flex items-center justify-center gap-3 shadow-lg ${!refinementPrompt || isRefining ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white'}`}>
-                        {isRefining ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改 (Apply Refinement)</span></>}
-                      </button>
+                      <div className="flex flex-col gap-3">
+                        <button disabled={!refinementPrompt || isRefining} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-display font-bold transition-all flex items-center justify-center gap-3 shadow-lg ${!refinementPrompt || isRefining ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white hover:scale-[1.01] active:scale-[0.99]'}`}>
+                          {isRefining ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改 (Apply Refinement)</span></>}
+                        </button>
+                        <div className="flex items-center gap-3">
+                          <div className="h-px flex-1 bg-antique-gold/10"></div>
+                          <span className="text-[10px] font-display font-bold text-sepia/30 uppercase tracking-widest">OR</span>
+                          <div className="h-px flex-1 bg-antique-gold/10"></div>
+                        </div>
+                        <button disabled={isRefining} onClick={regeneratePortrait} className={`w-full h-12 rounded-2xl font-display font-bold transition-all flex items-center justify-center gap-3 border-2 border-antique-gold/20 text-antique-gold hover:bg-antique-gold/5 ${isRefining ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                          <RefreshCw className={`w-4 h-4 ${isRefining ? 'animate-spin' : ''}`} />
+                          <span>重新生成 (Regenerate)</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
