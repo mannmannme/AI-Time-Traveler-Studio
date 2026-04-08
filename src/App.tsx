@@ -286,7 +286,7 @@ export default function App() {
         // Cooling Logic
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
-          let waitSeconds = isSegmentBreak ? 7 : 3;
+          let waitSeconds = isSegmentBreak ? 3 : 1;
           
           while (waitSeconds > 0 && generationId === activeGenerationIdRef.current) {
             setCoolingTime(waitSeconds);
@@ -373,7 +373,17 @@ export default function App() {
         }
         
         completedCount++;
-        setProgress((completedCount / totalStyles) * 100);
+        const targetProgress = (completedCount / totalStyles) * 100;
+        
+        // Smoothly animate to the next progress point
+        const currentProgress = progress;
+        const diff = targetProgress - currentProgress;
+        const steps = 10;
+        for (let i = 1; i <= steps; i++) {
+          if (generationId !== activeGenerationIdRef.current) break;
+          setProgress(currentProgress + (diff * (i / steps)));
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
       }
     } catch (err: any) {
       if (generationId === activeGenerationIdRef.current) {
@@ -513,9 +523,9 @@ export default function App() {
     }
   };
 
-  const regeneratePortrait = async () => {
-    if (!refiningPortraitId || !sourceImage) return;
-    const targetPortrait = portraits.find(p => p.id === refiningPortraitId);
+  const handleSingleRegenerate = async (portraitId: string) => {
+    if (!portraitId || !sourceImage) return;
+    const targetPortrait = portraits.find(p => p.id === portraitId);
     if (!targetPortrait) return;
 
     const style = STYLES.find(s => s.nameEn === targetPortrait.styleEn);
@@ -530,12 +540,13 @@ export default function App() {
     }, 500);
     
     // Update portrait status to refining
-    setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'refining' } : p));
+    setPortraits(prev => prev.map(p => p.id === portraitId ? { ...p, status: 'refining', errorMsg: undefined } : p));
 
     const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || manualApiKey;
     if (!apiKey) {
       setError("找不到 API 金鑰。");
       setIsRefining(false);
+      clearInterval(progressInterval);
       return;
     }
 
@@ -578,10 +589,12 @@ export default function App() {
         }
 
         if (imageUrl) {
-          setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, url: imageUrl, status: 'success' } : p));
-          setRefiningPortraitId(null);
-          setRefinementPrompt('');
-          setPaths([]);
+          setPortraits(prev => prev.map(p => p.id === portraitId ? { ...p, url: imageUrl, status: 'success' } : p));
+          if (refiningPortraitId === portraitId) {
+            setRefiningPortraitId(null);
+            setRefinementPrompt('');
+            setPaths([]);
+          }
         } else {
           throw new Error("API did not return an image.");
         }
@@ -589,7 +602,7 @@ export default function App() {
     } catch (err: any) {
       console.error("Regeneration error:", err);
       setError(err.message || "重新生成過程中發生錯誤。");
-      setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'error', errorMsg: err.message } : p));
+      setPortraits(prev => prev.map(p => p.id === portraitId ? { ...p, status: 'error', errorMsg: err.message } : p));
     } finally {
       clearInterval(progressInterval);
       setProgress(100);
@@ -1025,6 +1038,13 @@ export default function App() {
                               <p className="mt-2 text-[10px] text-red-800/30 italic">
                                 請嘗試更換照片或調整說明
                               </p>
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); handleSingleRegenerate(portrait.id); }}
+                                className="mt-4 px-4 py-2 bg-white border border-red-200 text-red-600 rounded-xl text-xs font-display font-bold flex items-center gap-2 hover:bg-red-50 transition-all shadow-sm"
+                              >
+                                <RefreshCw className="w-3 h-3" />
+                                重新生成
+                              </button>
                             </div>
                           ) : (
                             <>
@@ -1121,7 +1141,7 @@ export default function App() {
                           <span className="text-[10px] font-display font-bold text-sepia/30 uppercase tracking-widest">OR</span>
                           <div className="h-px flex-1 bg-antique-gold/10"></div>
                         </div>
-                        <button disabled={isRefining} onClick={regeneratePortrait} className={`w-full h-12 rounded-2xl font-display font-bold transition-all flex items-center justify-center gap-3 border-2 border-antique-gold/20 text-antique-gold hover:bg-antique-gold/5 ${isRefining ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <button disabled={isRefining} onClick={() => handleSingleRegenerate(refiningPortraitId!)} className={`w-full h-12 rounded-2xl font-display font-bold transition-all flex items-center justify-center gap-3 border-2 border-antique-gold/20 text-antique-gold hover:bg-antique-gold/5 ${isRefining ? 'opacity-50 cursor-not-allowed' : ''}`}>
                           <RefreshCw className={`w-4 h-4 ${isRefining ? 'animate-spin' : ''}`} />
                           <span>重新生成 (Regenerate)</span>
                         </button>
