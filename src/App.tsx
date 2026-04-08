@@ -99,7 +99,8 @@ export default function App() {
   const [hasKey, setHasKey] = useState<boolean | null>(null);
   const [manualApiKey, setManualApiKey] = useState<string>('');
   const [showKeyInput, setShowKeyInput] = useState(false);
-  const [gender, setGender] = useState<'male' | 'female' | 'pet'>('female');
+  const [subjectType, setSubjectType] = useState<'human' | 'pet'>('human');
+  const [gender, setGender] = useState<'male' | 'female'>('female');
   const [additionalDesc, setAdditionalDesc] = useState('');
   const [generationMode, setGenerationMode] = useState<'quick' | 'full'>('full');
   const [selectedStyleIds, setSelectedStyleIds] = useState<string[]>(STYLES.map(s => s.nameEn));
@@ -327,9 +328,16 @@ export default function App() {
         while (attempts < maxAttempts && !success && generationId === activeGenerationIdRef.current) {
           try {
             const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
-            const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
+            
+            let subjectTypeStr = subjectType === 'pet' ? `${gender} pet` : gender;
+            let identityRequirement = subjectType === 'pet' 
+              ? `Preserve original species and facial features of the pet. Do not humanize the face. The pet is ${gender}.` 
+              : `Preserve subject's identity, features, and original gender (${gender}). Maintain original age and body type.`;
+
+            const promptText = `Transform this ${subjectTypeStr} into a ${style.nameEn}. ${style.prompt} 
             ${additionalDesc ? `User request: ${additionalDesc}` : ''}
-            Requirements: Preserve facial identity, features, and original gender (${gender}). Maintain original age and body type. 
+            Requirements: ${identityRequirement}
+            ${subjectType === 'pet' ? `The pet should be wearing the elegant historical or fashion attire appropriate for a ${gender} of that era, but keep its animal head and face.` : ''}
             ${isHistorical ? `Historical accuracy: No modern technology.` : ''}
             High-resolution photorealistic portrait, 3:4 ratio.`;
 
@@ -582,15 +590,15 @@ export default function App() {
 
       const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
       
-      let subjectType = gender === 'pet' ? 'pet' : gender;
-      let identityRequirement = gender === 'pet' 
-        ? `Preserve original species and facial features of the pet. Do not humanize the face.` 
+      let subjectTypeStr = subjectType === 'pet' ? `${gender} pet` : gender;
+      let identityRequirement = subjectType === 'pet' 
+        ? `Preserve original species and facial features of the pet. Do not humanize the face. The pet is ${gender}.` 
         : `Preserve subject's identity, features, and original gender (${gender}). Maintain original age and body type.`;
 
-      const promptText = `Transform this ${subjectType} into a ${style.nameEn}. ${style.prompt} 
+      const promptText = `Transform this ${subjectTypeStr} into a ${style.nameEn}. ${style.prompt} 
       ${additionalDesc ? `User request: ${additionalDesc}` : ''}
       Requirements: ${identityRequirement}
-      ${gender === 'pet' ? 'The pet should be wearing the elegant historical or fashion attire described in the style, but keep its animal head and face.' : ''}
+      ${subjectType === 'pet' ? `The pet should be wearing the elegant historical or fashion attire appropriate for a ${gender} of that era, but keep its animal head and face.` : ''}
       ${isHistorical ? `Historical accuracy: No modern technology.` : ''}
       High-resolution photorealistic portrait, 3:4 ratio.`;
 
@@ -936,34 +944,40 @@ export default function App() {
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".jpg,.jpeg,.png,.webp" className="hidden" />
               <div className="mt-1 space-y-1.5">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">指定性別/對象</label>
+                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">對象類型</label>
                     <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl gap-1">
-                      <button onClick={() => setGender('male')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>男性</button>
-                      <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>女性</button>
-                      <button onClick={() => setGender('pet')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'pet' ? 'bg-antique-gold text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>寵物</button>
+                      <button onClick={() => setSubjectType('human')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${subjectType === 'human' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>人類</button>
+                      <button onClick={() => setSubjectType('pet')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${subjectType === 'pet' ? 'bg-antique-gold text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>寵物</button>
                     </div>
                   </div>
-                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">選擇模式</label>
-                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
-                      <button 
-                        onClick={() => {
-                          setGenerationMode('quick');
-                          setSelectedStyleIds(STYLES.slice(0, 3).map(s => s.nameEn));
-                        }} 
-                        className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${generationMode === 'quick' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
-                      >
-                        快速版
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setGenerationMode('full');
-                          setSelectedStyleIds(STYLES.map(s => s.nameEn));
-                        }} 
-                        className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${generationMode === 'full' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
-                      >
-                        完整版
-                      </button>
+                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">指定性別</label>
+                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl gap-1">
+                      <button onClick={() => setGender('male')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>{subjectType === 'pet' ? '公' : '男性'}</button>
+                      <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>{subjectType === 'pet' ? '母' : '女性'}</button>
                     </div>
+                  </div>
+                </div>
+                <div className="mt-1.5">
+                  <label className="block text-xs font-display font-bold text-dark-green mb-1">選擇模式</label>
+                  <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
+                    <button 
+                      onClick={() => {
+                        setGenerationMode('quick');
+                        setSelectedStyleIds(STYLES.slice(0, 3).map(s => s.nameEn));
+                      }} 
+                      className={`flex-1 py-1 rounded-lg text-xs font-sans font-bold ${generationMode === 'quick' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
+                    >
+                      快速版 (3張)
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setGenerationMode('full');
+                        setSelectedStyleIds(STYLES.map(s => s.nameEn));
+                      }} 
+                      className={`flex-1 py-1 rounded-lg text-xs font-sans font-bold ${generationMode === 'full' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
+                    >
+                      完整版 (6張)
+                    </button>
                   </div>
                 </div>
                 <div className="mt-1"><label className="block text-xs font-display font-bold text-dark-green mb-1">補充說明</label>
