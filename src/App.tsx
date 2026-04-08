@@ -33,7 +33,7 @@ interface GeneratedPortrait {
   url: string;
   prompt: string;
   caption?: string;
-  status?: 'success' | 'error';
+  status?: 'success' | 'error' | 'refining';
   errorMsg?: string;
 }
 
@@ -49,7 +49,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "文藝復興 (Renaissance Majesty)",
     nameEn: "Renaissance Majesty",
-    prompt: "A Renaissance oil painting portrait. Preserve subject's identity, features, and gender. Subject as a 16th-century noble in elegant attire (men: doublet/velvet cap; women: graceful gown/braided hair). Style: Museum-quality realism, soft chiaroscuro, sfumato finish. Background: Dark neutral depth. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Timeless, dignified."
+    prompt: "A Renaissance oil painting portrait. Preserve subject's identity, features, and gender. Subject as a 16th-century noble in elegant attire (men: doublet/velvet cap; women: graceful gown/braided hair). Expression: Subtle, reserved, no toothy smile, composed and dignified look. Style: Museum-quality realism, soft chiaroscuro, sfumato finish. Background: Dark neutral depth. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Timeless, dignified."
   },
   {
     name: "大正浪漫 (Taisho Romance)",
@@ -92,6 +92,7 @@ declare global {
 export default function App() {
   const [sourceImage, setSourceImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRefining, setIsRefining] = useState(false);
   const [portraits, setPortraits] = useState<GeneratedPortrait[]>([]);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -385,6 +386,8 @@ export default function App() {
   const handleStopGeneration = () => {
     stopSignalRef.current = true;
     setShouldStop(true);
+    setIsGenerating(false);
+    setCoolingTime(0);
   };
 
   const handleChangeApiKey = () => {
@@ -414,9 +417,13 @@ export default function App() {
       return;
     }
 
-    setIsGenerating(true);
+    setIsGenerating(false);
+    setIsRefining(true);
     setProgress(0);
     setError(null);
+
+    // Update portrait status to refining
+    setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'refining' } : p));
 
     const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || manualApiKey;
     if (!apiKey) {
@@ -487,7 +494,7 @@ export default function App() {
       console.error("Refinement error:", err);
       setError(err.message || "修改過程中發生錯誤。");
     } finally {
-      setIsGenerating(false);
+      setIsRefining(false);
     }
   };
 
@@ -808,7 +815,7 @@ export default function App() {
                   <textarea value={additionalDesc} onChange={(e) => setAdditionalDesc(e.target.value)} placeholder="例如：保留眼鏡特徵、服裝以深色系為主⋯" className="w-full py-1.5 px-3 bg-ivory border border-antique-gold/20 rounded-xl text-sm h-12 text-stone-700 font-display font-bold" />
                 </div>
               </div>
-              <button disabled={!sourceImage || isGenerating || selectedStyleIds.length === 0} onClick={generatePortraits} className={`w-full mt-2 h-12 rounded-xl font-display font-bold transition-all flex items-center justify-center gap-3 ${!sourceImage || isGenerating || selectedStyleIds.length === 0 ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white shadow-lg'}`}>
+              <button disabled={!sourceImage || isGenerating || isRefining || selectedStyleIds.length === 0} onClick={generatePortraits} className={`w-full mt-2 h-12 rounded-xl font-display font-bold transition-all flex items-center justify-center gap-3 ${!sourceImage || isGenerating || isRefining || selectedStyleIds.length === 0 ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white shadow-lg'}`}>
                 {isGenerating ? (
                   <>
                     <Loader2 className="w-6 h-6 animate-spin" />
@@ -873,7 +880,12 @@ export default function App() {
                     <motion.div key={portrait.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.1 }} className="group relative">
                       <div className="nostalgic-border bg-white rounded-sm overflow-hidden shadow-xl hover:shadow-2xl transition-all">
                         <div className="aspect-[3/4] relative overflow-hidden bg-stone-50">
-                          {portrait.status === 'error' ? (
+                          {portrait.status === 'refining' ? (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm">
+                              <Loader2 className="w-10 h-10 animate-spin text-antique-gold mb-2" />
+                              <p className="text-[10px] font-display font-bold text-antique-gold italic">時光重塑中...</p>
+                            </div>
+                          ) : portrait.status === 'error' ? (
                             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-red-50/50">
                               <X className="w-12 h-12 text-red-300 mb-3" />
                               <p className="text-xs font-display font-bold text-red-800/60 leading-relaxed">
@@ -969,8 +981,8 @@ export default function App() {
                         <label className="block text-sm font-display font-bold text-dark-green mb-2">修改指令 (Refinement Request)</label>
                         <textarea value={refinementPrompt} onChange={(e) => setRefinementPrompt(e.target.value)} placeholder="例如：更換髮型、更改衣服顏色、移除物件..." className="w-full p-4 bg-white border border-antique-gold/20 rounded-2xl text-base h-48 text-stone-700 font-display font-bold" />
                       </div>
-                      <button disabled={!refinementPrompt || isGenerating} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-display font-bold transition-all flex items-center justify-center gap-3 shadow-lg ${!refinementPrompt || isGenerating ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white'}`}>
-                        {isGenerating ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改 (Apply Refinement)</span></>}
+                      <button disabled={!refinementPrompt || isRefining} onClick={refinePortrait} className={`w-full h-16 rounded-2xl font-display font-bold transition-all flex items-center justify-center gap-3 shadow-lg ${!refinementPrompt || isRefining ? 'bg-stone-200 text-stone-400' : 'bg-vintage-red text-white'}`}>
+                        {isRefining ? <><Loader2 className="w-5 h-5 animate-spin" /><span>修改中...</span></> : <><Sparkles className="w-5 h-5" /><span>確認修改 (Apply Refinement)</span></>}
                       </button>
                     </div>
                   </div>
