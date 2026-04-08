@@ -115,7 +115,7 @@ export default function App() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const stopSignalRef = useRef(false);
+  const activeGenerationIdRef = useRef<number>(0);
 
   // --- Helper: Base64 to Blob URL ---
   const base64ToBlobUrl = (base64: string, mimeType: string): string => {
@@ -237,11 +237,14 @@ export default function App() {
 
   const generatePortraits = async () => {
     if (!sourceImage) return;
+    
+    // Increment generation ID to invalidate any previous running loops
+    const generationId = ++activeGenerationIdRef.current;
+    
     setIsGenerating(true);
     setPortraits([]);
     setProgress(0);
     setError(null);
-    stopSignalRef.current = false;
     setShouldStop(false);
 
     const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || manualApiKey;
@@ -258,7 +261,7 @@ export default function App() {
       
       // 1. Resize image with safety check
       const resizedImage = await resizeImage(sourceImage);
-      if (stopSignalRef.current) throw new Error("USER_STOPPED");
+      if (generationId !== activeGenerationIdRef.current) return;
       
       const base64Data = resizedImage.split(',')[1];
       const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
@@ -278,14 +281,14 @@ export default function App() {
 
       // 3. Generation Loop
       for (const style of stylesToGenerate) {
-        if (stopSignalRef.current) break;
+        if (generationId !== activeGenerationIdRef.current) break;
 
         // Cooling Logic
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
           let waitSeconds = isSegmentBreak ? 7 : 3;
           
-          while (waitSeconds > 0 && !stopSignalRef.current) {
+          while (waitSeconds > 0 && generationId === activeGenerationIdRef.current) {
             setCoolingTime(waitSeconds);
             await new Promise(resolve => setTimeout(resolve, 1000));
             waitSeconds--;
@@ -293,13 +296,13 @@ export default function App() {
           setCoolingTime(0);
         }
 
-        if (stopSignalRef.current) break;
+        if (generationId !== activeGenerationIdRef.current) break;
 
         let attempts = 0;
         const maxAttempts = 2; 
         let success = false;
 
-        while (attempts < maxAttempts && !success && !stopSignalRef.current) {
+        while (attempts < maxAttempts && !success && generationId === activeGenerationIdRef.current) {
           try {
             const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
             const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
@@ -321,7 +324,7 @@ export default function App() {
               }
             });
 
-            if (stopSignalRef.current) break;
+            if (generationId !== activeGenerationIdRef.current) break;
 
             const candidates = response.candidates || [];
             if (candidates.length > 0) {
@@ -350,7 +353,7 @@ export default function App() {
             if (!success) throw new Error("Empty response");
 
           } catch (err: any) {
-            if (stopSignalRef.current) break;
+            if (generationId !== activeGenerationIdRef.current) break;
             attempts++;
             console.error(`Error generating ${style.nameEn}:`, err);
             if (attempts >= maxAttempts) {
@@ -373,18 +376,21 @@ export default function App() {
         setProgress((completedCount / totalStyles) * 100);
       }
     } catch (err: any) {
-      if (err.message !== "USER_STOPPED") {
+      if (generationId === activeGenerationIdRef.current) {
         console.error("Fatal error:", err);
         setError(err.message || "生成過程中發生錯誤。");
       }
     } finally {
-      setIsGenerating(false);
-      setCoolingTime(0);
+      if (generationId === activeGenerationIdRef.current) {
+        setIsGenerating(false);
+        setCoolingTime(0);
+      }
     }
   };
 
   const handleStopGeneration = () => {
-    stopSignalRef.current = true;
+    // Incrementing the ID will cause all checks in generatePortraits to fail
+    activeGenerationIdRef.current++;
     setShouldStop(true);
     setIsGenerating(false);
     setCoolingTime(0);
@@ -639,7 +645,7 @@ export default function App() {
     ctx.fillText('Professional Time-Travel Portraits. Designed by 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
     
     const collageUrl = canvas.toDataURL('image/jpeg', 0.95);
-    downloadImage(collageUrl, 'portrait-collage.jpg');
+    downloadImage(collageUrl, 'portrait-album.jpg');
   }, [portraits]);
 
   return (
