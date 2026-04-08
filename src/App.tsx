@@ -113,6 +113,7 @@ export default function App() {
   const [shouldStop, setShouldStop] = useState(false);
   const [coolingTime, setCoolingTime] = useState(0);
   const [isChangingKey, setIsChangingKey] = useState(false);
+  const [statusText, setStatusText] = useState('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -256,6 +257,7 @@ export default function App() {
     setIsGenerating(true);
     setPortraits([]);
     setProgress(0);
+    setStatusText('正在準備照片數據...');
     setError(null);
     setShouldStop(false);
 
@@ -296,6 +298,7 @@ export default function App() {
       }, 500);
       
       // 1. Resize image with safety check
+      setStatusText('正在優化照片尺寸...');
       const resizedImage = await resizeImage(sourceImage);
       if (generationId !== activeGenerationIdRef.current) return;
       
@@ -306,17 +309,22 @@ export default function App() {
       for (const style of stylesToGenerate) {
         if (generationId !== activeGenerationIdRef.current) break;
 
+        const isLastStyle = completedCount === totalStyles - 1;
+        setStatusText(isLastStyle ? `正在處理最後細節：${style.name}...` : `正在顯影：${style.name}...`);
+
         // Cooling Logic
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
           let waitSeconds = isSegmentBreak ? 3 : 1;
           
           while (waitSeconds > 0 && generationId === activeGenerationIdRef.current) {
+            setStatusText(`時光機冷卻中 (${waitSeconds}s)...`);
             setCoolingTime(waitSeconds);
             await new Promise(resolve => setTimeout(resolve, 1000));
             waitSeconds--;
           }
           setCoolingTime(0);
+          setStatusText(isLastStyle ? `正在處理最後細節：${style.name}...` : `正在顯影：${style.name}...`);
         }
 
         if (generationId !== activeGenerationIdRef.current) break;
@@ -405,6 +413,12 @@ export default function App() {
         completedCount++;
         const targetProgress = (completedCount / totalStyles) * 100;
         
+        if (completedCount < totalStyles) {
+          setStatusText('準備切換下一個風格...');
+        } else {
+          setStatusText('時光肖像生成完成！');
+        }
+
         // Smoothly animate to the next progress point
         const currentProgress = progress;
         const diff = targetProgress - currentProgress;
@@ -988,7 +1002,7 @@ export default function App() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="w-6 h-6 animate-spin" />
-                    <span>
+                    <span className="font-sans">
                       {coolingTime > 0 
                         ? `API 冷卻中 (${coolingTime}s)...` 
                         : `生成中 (${Math.round(progress)}%)`}
@@ -1055,9 +1069,9 @@ export default function App() {
                         <Loader2 className="w-3.5 h-3.5 animate-spin text-antique-gold" />
                         {isRefining 
                           ? '正在重現時光肖像 (Recreating Portrait)...'
-                          : '正在開啟時光之門 (Opening Time Portal)...'}
+                          : statusText || '正在開啟時光之門 (Opening Time Portal)...'}
                       </span>
-                      <span className="text-xs font-mono font-bold text-antique-gold">{Math.round(progress)}%</span>
+                      <span className="text-xs font-inter font-bold text-antique-gold">{Math.round(progress)}%</span>
                     </div>
                     <div className="h-2 w-full bg-antique-gold/10 rounded-full overflow-hidden">
                       <motion.div 
