@@ -54,7 +54,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "大正浪漫 (Taisho Romance)",
     nameEn: "Taisho Romance",
-    prompt: "A Taisho Roman studio portrait. Preserve subject's identity and features. Subject in elegant 1920s Japanese attire (women: hakama/kimono with lace; men: gakuran or formal kimono). Hair & Appearance: If the subject is young, strictly avoid middle-aged bun hairstyles; instead, depict as a youthful 'Haicara' (modern girl/college student) with flowing hair or ribbons to enhance beauty. Style: Vintage sepia-toned photography, soft diffused lighting. Background: Traditional Japanese interior. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Nostalgic, romantic, youthful prime."
+    prompt: "A Taisho Roman studio portrait. Preserve subject's identity and features. Subject in elegant 1920s Japanese attire (women: hakama/kimono with lace; men: gakuran or formal kimono). Hair & Appearance: If the subject is young, strictly avoid middle-aged bun hairstyles; instead, depict as a youthful 'Haikara' (modern girl/college student) with flowing hair or ribbons to enhance beauty. Style: Vintage sepia-toned photography, soft diffused lighting. Background: Traditional Japanese interior. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Nostalgic, romantic, youthful prime."
   },
   {
     name: "好萊塢默片 (Silent Glamour)",
@@ -64,7 +64,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "臺灣風華年代 (Formosa Radiance)",
     nameEn: "Formosa Radiance",
-    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: A nostalgic 1970s sidewalk or pedestrian area with vintage shop signs, beautiful shallow depth of field. Ensure subject is not in the middle of a vehicle lane. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Warm, nostalgic."
+    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Composition: Tight half-body portrait, subject filling 85% of the frame, 3:4 vertical. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: A quiet, empty nostalgic 1970s street scene. Extremely shallow depth of field with heavy bokeh effect. Vintage shop signs and neon lights in the background must be soft, blurry, and out of focus, with no legible text or characters. Ensure the subject is the sole focus; no other people or bystanders. Mood: Warm, nostalgic."
   },
   {
     name: "當代時尚 (Contemporary Fashion)",
@@ -427,6 +427,10 @@ export default function App() {
     setIsRefining(true);
     setProgress(0);
     setError(null);
+    
+    const progressInterval = setInterval(() => {
+      setProgress(prev => (prev < 95 ? prev + (95 - prev) * 0.1 : prev));
+    }, 500);
 
     // Update portrait status to refining
     setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'refining' } : p));
@@ -500,7 +504,12 @@ export default function App() {
       console.error("Refinement error:", err);
       setError(err.message || "修改過程中發生錯誤。");
     } finally {
-      setIsRefining(false);
+      clearInterval(progressInterval);
+      setProgress(100);
+      setTimeout(() => {
+        setIsRefining(false);
+        setProgress(0);
+      }, 1000);
     }
   };
 
@@ -514,6 +523,11 @@ export default function App() {
 
     setIsRefining(true);
     setError(null);
+    setProgress(0);
+    
+    const progressInterval = setInterval(() => {
+      setProgress(prev => (prev < 95 ? prev + (95 - prev) * 0.1 : prev));
+    }, 500);
     
     // Update portrait status to refining
     setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'refining' } : p));
@@ -577,7 +591,12 @@ export default function App() {
       setError(err.message || "重新生成過程中發生錯誤。");
       setPortraits(prev => prev.map(p => p.id === refiningPortraitId ? { ...p, status: 'error', errorMsg: err.message } : p));
     } finally {
-      setIsRefining(false);
+      clearInterval(progressInterval);
+      setProgress(100);
+      setTimeout(() => {
+        setIsRefining(false);
+        setProgress(0);
+      }, 1000);
     }
   };
 
@@ -717,9 +736,9 @@ export default function App() {
     }
     
     ctx.fillStyle = '#888888';
-    ctx.font = 'italic 24px "Playfair Display", "Noto Serif TC", serif';
+    ctx.font = 'italic 28px "Playfair Display", "Noto Serif TC", serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Professional Time-Travel Portraits. Designed by 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
+    ctx.fillText('Professional Time-Travel Portraits. Designed By 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
     
     const collageUrl = canvas.toDataURL('image/jpeg', 0.95);
     downloadImage(collageUrl, 'portrait-album.jpg');
@@ -954,6 +973,35 @@ export default function App() {
             <div className="flex items-center justify-between mb-6"><h2 className="text-lg md:text-xl font-display font-bold text-dark-green flex items-center gap-2"><Grid className="w-5 h-5 text-antique-gold" />時光畫廊</h2>
               {portraits.filter(p => p.status === 'success').length >= 1 && <button onClick={generateCollage} className="px-4 py-2 bg-white border-2 border-antique-gold text-antique-gold rounded-lg font-display font-bold flex items-center gap-2 shadow-sm text-sm"><Download className="w-3.5 h-3.5" />下載合集</button>}
             </div>
+
+            <AnimatePresence>
+              {(isGenerating || isRefining) && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }} 
+                  animate={{ opacity: 1, height: 'auto', marginBottom: 24 }} 
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="bg-white/60 backdrop-blur-sm p-5 rounded-3xl border border-antique-gold/10 shadow-sm">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-display font-bold text-dark-green flex items-center gap-2">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-antique-gold" />
+                        {isRefining ? '正在重塑時光肖像 (Refining Portrait)...' : '正在開啟時光之門 (Opening Time Portal)...'}
+                      </span>
+                      <span className="text-xs font-mono font-bold text-antique-gold">{Math.round(progress)}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-antique-gold/10 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-gradient-to-r from-antique-gold to-antique-gold/60"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress}%` }}
+                        transition={{ type: "spring", stiffness: 50, damping: 20 }}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             {portraits.length === 0 && !isGenerating ? (
               <div className="w-full flex-grow min-h-[450px] flex flex-col items-center justify-center border-2 border-dashed border-antique-gold/20 rounded-[40px] bg-white/40"><ImageIcon className="w-16 h-16 mb-4 text-antique-gold/20" /><p className="text-xl font-display italic text-antique-gold/40">等待開啟時光之門</p></div>
             ) : (
