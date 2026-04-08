@@ -717,7 +717,7 @@ export default function App() {
     }
     
     ctx.fillStyle = '#888888';
-    ctx.font = 'italic 35px "Playfair Display", "Noto Serif TC", serif';
+    ctx.font = 'italic 24px "Playfair Display", "Noto Serif TC", serif';
     ctx.textAlign = 'center';
     ctx.fillText('Professional Time-Travel Portraits. Designed by 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
     
