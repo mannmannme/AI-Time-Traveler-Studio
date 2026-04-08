@@ -64,7 +64,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "臺灣風華年代 (Formosa Radiance)",
     nameEn: "Formosa Radiance",
-    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Composition: Tight half-body portrait, subject filling 85% of the frame, 3:4 vertical. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: A quiet, empty nostalgic 1970s street scene. Extremely shallow depth of field with heavy bokeh effect. Vintage shop signs and neon lights in the background must be soft, blurry, and out of focus, with no legible text or characters. Ensure the subject is the sole focus; no other people or bystanders. Mood: Warm, nostalgic."
+    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Composition: Tight half-body portrait, subject filling 85% of the frame, 3:4 vertical. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: A quiet, humanistic 1970s streetscape featuring traditional arcades (Qilou) or clean sidewalks. Occasionally, soft blurry neon lights may appear in the distance. Extremely shallow depth of field with heavy bokeh. Ensure no legible text on signs. No other people or bystanders. Mood: Warm, Humanistic with a touch of nostalgia."
   },
   {
     name: "當代時尚 (Contemporary Fashion)",
@@ -99,7 +99,7 @@ export default function App() {
   const [hasKey, setHasKey] = useState<boolean | null>(null);
   const [manualApiKey, setManualApiKey] = useState<string>('');
   const [showKeyInput, setShowKeyInput] = useState(false);
-  const [gender, setGender] = useState<'male' | 'female'>('female');
+  const [gender, setGender] = useState<'male' | 'female' | 'pet'>('female');
   const [additionalDesc, setAdditionalDesc] = useState('');
   const [generationMode, setGenerationMode] = useState<'quick' | 'full'>('full');
   const [selectedStyleIds, setSelectedStyleIds] = useState<string[]>(STYLES.map(s => s.nameEn));
@@ -116,6 +116,17 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const activeGenerationIdRef = useRef<number>(0);
+
+  const translateError = (msg: string) => {
+    if (!msg) return "生成失敗";
+    const lowerMsg = msg.toLowerCase();
+    if (lowerMsg.includes("503") || lowerMsg.includes("unavailable")) return "時光機暫時繁忙，請稍後再試一次";
+    if (lowerMsg.includes("429") || lowerMsg.includes("resource_exhausted")) return "請求過於頻繁，請稍候片刻";
+    if (lowerMsg.includes("401") || lowerMsg.includes("api_key_invalid")) return "API 金鑰無效，請檢查設定";
+    if (lowerMsg.includes("safety")) return "由於安全過濾機制，無法生成此內容";
+    if (lowerMsg.includes("load failed")) return "圖片傳輸失敗，請檢查網路連線";
+    return "生成過程中發生細微偏差，請重試";
+  };
 
   // --- Helper: Base64 to Blob URL ---
   const base64ToBlobUrl = (base64: string, mimeType: string): string => {
@@ -255,9 +266,33 @@ export default function App() {
       return;
     }
 
+    const stylesToGenerate = STYLES.filter(s => selectedStyleIds.includes(s.nameEn));
+    const totalStyles = stylesToGenerate.length;
+    
+    if (totalStyles === 0) {
+      setError("請至少選擇一個風格。");
+      setIsGenerating(false);
+      return;
+    }
+
+    let completedCount = 0;
+    let crawlInterval: any;
+    console.log("Starting generation for styles:", stylesToGenerate.map(s => s.nameEn));
+
     try {
       const ai = new GoogleGenAI({ apiKey });
       const modelName = "gemini-3.1-flash-image-preview";
+
+      // Start a crawling progress interval for initial generation
+      crawlInterval = setInterval(() => {
+        setProgress(prev => {
+          const nextMilestone = ((completedCount + 1) / totalStyles) * 100;
+          if (prev < nextMilestone - 1) {
+            return prev + (nextMilestone - prev) * 0.05;
+          }
+          return prev;
+        });
+      }, 500);
       
       // 1. Resize image with safety check
       const resizedImage = await resizeImage(sourceImage);
@@ -265,19 +300,6 @@ export default function App() {
       
       const base64Data = resizedImage.split(',')[1];
       const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
-
-      // 2. Filter styles
-      const stylesToGenerate = STYLES.filter(s => selectedStyleIds.includes(s.nameEn));
-      const totalStyles = stylesToGenerate.length;
-      
-      if (totalStyles === 0) {
-        setError("請至少選擇一個風格。");
-        setIsGenerating(false);
-        return;
-      }
-      
-      let completedCount = 0;
-      console.log("Starting generation for styles:", stylesToGenerate.map(s => s.nameEn));
 
       // 3. Generation Loop
       for (const style of stylesToGenerate) {
@@ -392,6 +414,7 @@ export default function App() {
       }
     } finally {
       if (generationId === activeGenerationIdRef.current) {
+        if (crawlInterval) clearInterval(crawlInterval);
         setIsGenerating(false);
         setCoolingTime(0);
       }
@@ -558,9 +581,16 @@ export default function App() {
       const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
 
       const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
-      const promptText = `Transform this ${gender} into a ${style.nameEn}. ${style.prompt} 
+      
+      let subjectType = gender === 'pet' ? 'pet' : gender;
+      let identityRequirement = gender === 'pet' 
+        ? `Preserve original species and facial features of the pet. Do not humanize the face.` 
+        : `Preserve subject's identity, features, and original gender (${gender}). Maintain original age and body type.`;
+
+      const promptText = `Transform this ${subjectType} into a ${style.nameEn}. ${style.prompt} 
       ${additionalDesc ? `User request: ${additionalDesc}` : ''}
-      Requirements: Preserve facial identity, features, and original gender (${gender}). Maintain original age and body type. 
+      Requirements: ${identityRequirement}
+      ${gender === 'pet' ? 'The pet should be wearing the elegant historical or fashion attire described in the style, but keep its animal head and face.' : ''}
       ${isHistorical ? `Historical accuracy: No modern technology.` : ''}
       High-resolution photorealistic portrait, 3:4 ratio.`;
 
@@ -692,8 +722,8 @@ export default function App() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Optimized layout: 3 columns for 3, 5, 6 images. 2 columns for 2, 4 images.
-    const cols = (count === 2 || count === 4) ? 2 : 3;
+    // Optimized layout: 1 col for 1, 2 cols for 2/4, 3 cols for 3/5/6+
+    const cols = count === 4 ? 2 : Math.min(count, 3);
     const rows = Math.ceil(count / cols);
 
     const imgWidth = 1024;
@@ -732,7 +762,16 @@ export default function App() {
       const img = await loadImg(successfulPortraits[i].url);
       const row = Math.floor(i / cols);
       const col = i % cols;
-      const x = paddingX + col * (imgWidth + paddingX);
+      
+      // Dynamic centering for the last row if it's not full
+      let offsetX = 0;
+      const isLastRow = row === rows - 1;
+      const itemsInLastRow = count % cols || cols;
+      if (isLastRow && itemsInLastRow < cols) {
+        offsetX = ((cols - itemsInLastRow) * (imgWidth + paddingX)) / 2;
+      }
+
+      const x = paddingX + col * (imgWidth + paddingX) + offsetX;
       const y = headerHeight + row * (imgHeight + paddingY);
       
       ctx.fillStyle = '#ffffff';
@@ -749,7 +788,7 @@ export default function App() {
     }
     
     ctx.fillStyle = '#888888';
-    ctx.font = 'italic 28px "Playfair Display", "Noto Serif TC", serif';
+    ctx.font = 'italic 32px "Playfair Display", "Noto Serif TC", serif';
     ctx.textAlign = 'center';
     ctx.fillText('Professional Time-Travel Portraits. Designed By 蔓影蔓食.', canvas.width / 2, canvas.height - 70);
     
@@ -897,10 +936,11 @@ export default function App() {
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".jpg,.jpeg,.png,.webp" className="hidden" />
               <div className="mt-1 space-y-1.5">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">指定性別</label>
-                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
-                      <button onClick={() => setGender('male')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>男性</button>
-                      <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}>女性</button>
+                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">指定性別/對象</label>
+                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl gap-1">
+                      <button onClick={() => setGender('male')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>男性</button>
+                      <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>女性</button>
+                      <button onClick={() => setGender('pet')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'pet' ? 'bg-antique-gold text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>寵物</button>
                     </div>
                   </div>
                   <div><label className="block text-xs font-display font-bold text-dark-green mb-1">選擇模式</label>
@@ -999,7 +1039,9 @@ export default function App() {
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-xs font-display font-bold text-dark-green flex items-center gap-2">
                         <Loader2 className="w-3.5 h-3.5 animate-spin text-antique-gold" />
-                        {isRefining ? '正在重塑時光肖像 (Refining Portrait)...' : '正在開啟時光之門 (Opening Time Portal)...'}
+                        {isRefining 
+                          ? '正在重現時光肖像 (Recreating Portrait)...'
+                          : '正在開啟時光之門 (Opening Time Portal)...'}
                       </span>
                       <span className="text-xs font-mono font-bold text-antique-gold">{Math.round(progress)}%</span>
                     </div>
@@ -1033,7 +1075,7 @@ export default function App() {
                             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-red-50/50">
                               <X className="w-12 h-12 text-red-300 mb-3" />
                               <p className="text-xs font-display font-bold text-red-800/60 leading-relaxed">
-                                {portrait.errorMsg || "生成失敗"}
+                                {translateError(portrait.errorMsg || "")}
                               </p>
                               <p className="mt-2 text-[10px] text-red-800/30 italic">
                                 請嘗試更換照片或調整說明
