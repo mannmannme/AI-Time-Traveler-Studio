@@ -298,20 +298,21 @@ export default function App() {
       }, 500);
       
       // 1. Resize image with safety check
-      setStatusText('正在優化照片尺寸...');
+      setStatusText('正在優化照片尺寸 (不消耗 Token)...');
       const resizedImage = await resizeImage(sourceImage);
       if (generationId !== activeGenerationIdRef.current) return;
       
       const base64Data = resizedImage.split(',')[1];
       const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
 
+      setStatusText('正在開啟時光之門...');
+
       // 3. Generation Loop
       for (const style of stylesToGenerate) {
         if (generationId !== activeGenerationIdRef.current) break;
 
         const isLastStyle = completedCount === totalStyles - 1;
-        setStatusText(isLastStyle ? `正在處理最後細節：${style.name}...` : `正在顯影：${style.name}...`);
-
+        
         // Cooling Logic
         if (completedCount > 0) {
           const isSegmentBreak = completedCount % 3 === 0;
@@ -324,7 +325,6 @@ export default function App() {
             waitSeconds--;
           }
           setCoolingTime(0);
-          setStatusText(isLastStyle ? `正在處理最後細節：${style.name}...` : `正在顯影：${style.name}...`);
         }
 
         if (generationId !== activeGenerationIdRef.current) break;
@@ -335,6 +335,8 @@ export default function App() {
 
         while (attempts < maxAttempts && !success && generationId === activeGenerationIdRef.current) {
           try {
+            setStatusText(`正在向 AI 請求顯影：${style.name}...`);
+            
             const isHistorical = ["Renaissance Majesty", "Taisho Romance", "Silent Glamour", "Formosa Radiance"].includes(style.nameEn);
             
             let subjectTypeStr = subjectType === 'pet' ? `${gender} pet` : gender;
@@ -376,6 +378,7 @@ export default function App() {
               }
 
               if (imageUrl) {
+                setStatusText(`${style.name} 顯影成功！`);
                 setPortraits(prev => [...prev, {
                   id: Math.random().toString(36).substr(2, 9),
                   style: style.name,
