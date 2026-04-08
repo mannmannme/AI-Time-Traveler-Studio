@@ -792,7 +792,7 @@ export default function App() {
       <header className="bg-ivory border-b border-antique-gold/20 py-10 px-4 text-center relative">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto">
           <h1 className="text-3xl md:text-6xl font-display font-bold text-dark-green mb-4 tracking-tight">匠心藝境・時光肖像館</h1>
-          <p className="text-antique-gold text-base md:text-xl tracking-[0.4em] font-elegant font-bold">TRAVEL THROUGH TIME AND DISCOVER YOURSELF</p>
+          <p className="text-antique-gold text-base md:text-xl tracking-[0.5em] font-elegant font-bold">TRAVEL THROUGH TIME AND DISCOVER YOURSELF</p>
           <div className="flex items-center justify-center gap-3 my-4"><div className="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent via-antique-gold/60 to-transparent"></div><div className="w-2 h-2 rotate-45 border border-antique-gold/60"></div><div className="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent via-antique-gold/60 to-transparent"></div></div>
           <p className="text-sepia/80 font-elegant text-lg md:text-xl italic">"Professional Time-Travel Portrait Generator"</p>
         </motion.div>
@@ -827,7 +827,7 @@ export default function App() {
                 <div className="w-full sm:w-64">
                   <div className="flex items-center justify-between mb-3">
                     <label className="block text-sm font-display font-bold text-dark-green">選擇風格</label>
-                    <span className="text-[10px] text-antique-gold font-bold">
+                    <span className="text-[10px] text-antique-gold font-inter font-bold">
                       {generationMode === 'quick' ? `已選 ${selectedStyleIds.length}/3` : `已選 ${selectedStyleIds.length}/6`}
                     </span>
                   </div>
@@ -1115,10 +1115,10 @@ export default function App() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none"></div>
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <div className="flex items-center justify-center gap-4 mb-3"><div className="h-px w-16 bg-antique-gold"></div><History className="w-6 h-6 text-antique-gold" /><div className="h-px w-16 bg-antique-gold"></div></div>
-          <p className="text-antique-gold font-display font-bold text-xl mb-1 tracking-wide">屏東職人町</p>
-          <p className="text-ivory/60 text-xs mb-3 font-display tracking-wide">屏東縣屏東市仁德路43巷6號</p>
+          <p className="text-antique-gold font-sans font-bold text-xl mb-1 tracking-wide">屏東職人町</p>
+          <p className="text-ivory/60 text-xs mb-3 font-sans tracking-wide">屏東縣屏東市仁德路43巷6號</p>
           <div className="h-px w-full max-w-xs bg-antique-gold/20 mx-auto mb-3"></div>
-          <p className="text-ivory/40 text-[10px] tracking-widest uppercase italic font-display font-bold">© 2026 匠心藝境・時光肖像館. DESIGNED BY 蔓影蔓食. All rights reserved.</p>
+          <p className="text-ivory/40 text-[10px] tracking-widest uppercase italic font-sans font-bold">© 2026 匠心藝境・時光肖像館. DESIGNED BY 蔓影蔓食. All rights reserved.</p>
         </div>
       </footer>
     </div>
