@@ -714,8 +714,25 @@ export default function App() {
             <section className="bg-white/80 backdrop-blur-sm p-4 md:p-6 rounded-2xl shadow-xl border border-antique-gold/10 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto custom-scrollbar">
               <h2 className="text-lg md:text-xl font-display font-bold mb-4 md:mb-6 flex items-center gap-2 text-dark-green"><Camera className="w-5 h-5 text-antique-gold" />設定與上傳</h2>
               <div className="flex flex-col sm:flex-row gap-6 md:gap-8">
-                <div onClick={() => fileInputRef.current?.click()} className={`relative w-full sm:w-56 h-64 sm:h-72 flex-shrink-0 rounded-xl border-2 border-dashed transition-all cursor-pointer overflow-hidden ${sourceImage ? 'border-transparent' : 'border-antique-gold/30 hover:border-antique-gold/60 bg-ivory'}`}>
-                  {sourceImage ? <img src={sourceImage} alt="Source" className="w-full h-full object-cover" /> : <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center"><Upload className="w-8 h-8 text-antique-gold/40 mb-3" /><p className="text-sepia text-lg font-display font-bold">上傳照片</p></div>}
+                <div className="flex flex-col w-full sm:w-56">
+                  <div onClick={() => fileInputRef.current?.click()} className={`relative w-full h-64 sm:h-72 flex-shrink-0 rounded-xl border-2 border-dashed transition-all cursor-pointer overflow-hidden ${sourceImage ? 'border-transparent' : 'border-antique-gold/30 hover:border-antique-gold/60 bg-ivory'}`}>
+                    {sourceImage ? (
+                      <img src={sourceImage} alt="Source" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                        <Upload className="w-8 h-8 text-antique-gold/40 mb-3" />
+                        <p className="text-sepia text-lg font-display font-bold mb-4">上傳照片</p>
+                        <div className="space-y-2 max-w-[180px]">
+                          <p className="text-[10px] text-sepia/50 leading-relaxed">
+                            💡 建議照片背景乾淨、光線充足，<br />以獲得最佳藝術效果。
+                          </p>
+                          <p className="text-[10px] text-sepia/40 italic">
+                            支援 JPG, PNG, WebP (小於 5MB)
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="w-full sm:w-64">
                   <div className="flex items-center justify-between mb-3">
@@ -755,7 +772,7 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
+              <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".jpg,.jpeg,.png,.webp" className="hidden" />
               <div className="mt-1 space-y-1.5">
                 <div className="grid grid-cols-2 gap-4">
                   <div><label className="block text-xs font-display font-bold text-dark-green mb-1">指定性別</label>
@@ -804,7 +821,7 @@ export default function App() {
                 ) : (
                   <>
                     <Sparkles className="w-6 h-6" />
-                    <span>生成你的時光肖像 (Generate)</span>
+                    <span>開始你的時光旅行 (Start Journey)</span>
                   </>
                 )}
               </button>
