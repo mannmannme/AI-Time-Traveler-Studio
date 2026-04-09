@@ -1101,7 +1101,7 @@ export default function App() {
                     className="w-full h-10 rounded-xl font-display font-bold text-red-800/20 hover:text-red-800/60 border border-dashed border-red-800/10 hover:bg-red-800/5 transition-all flex items-center justify-center gap-2 text-sm"
                   >
                     <Eraser className="w-3 h-3" />
-                    <span>註銷金鑰並離開 (Clear <span className="font-inter mx-0.5">&</span> Logout)</span>
+                    <span>註銷金鑰並離開 (Clear <span className="font-sans mx-0.5">&</span> Logout)</span>
                   </button>
                 </div>
               )}
@@ -1318,7 +1318,9 @@ export default function App() {
           <p className="text-antique-gold font-sans font-bold text-xl mb-1 tracking-wide">屏東職人町</p>
           <p className="text-ivory/60 text-xs mb-3 font-sans tracking-wide">屏東縣屏東市仁德路43巷6號</p>
           <div className="h-px w-full max-w-xs bg-antique-gold/20 mx-auto mb-3"></div>
-          <p className="text-ivory/40 text-[10px] tracking-widest uppercase italic font-sans font-bold">© 2026 匠心藝境・時光肖像館. DESIGNED BY 蔓影蔓食. All rights reserved.</p>
+          <p className="text-ivory/40 text-[10px] tracking-widest uppercase italic font-sans font-bold">
+            © 2026 匠心藝境・時光肖像館. DESIGNED BY 蔓影蔓食. <span className="block sm:inline mt-1 sm:mt-0">All rights reserved.</span>
+          </p>
         </div>
       </footer>
     </div>
