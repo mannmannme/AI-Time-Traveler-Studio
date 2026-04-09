@@ -54,7 +54,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "大正浪漫 (Taisho Romance)",
     nameEn: "Taisho Romance",
-    prompt: "A Taisho Roman studio portrait. Preserve subject's identity and features. Subject in elegant 1920s Japanese attire (women: hakama/kimono with lace; men: gakuran or formal kimono). Hair & Appearance: If the subject is young, strictly avoid middle-aged bun hairstyles; instead, depict as a youthful 'Haikara' (modern girl/college student) with flowing hair or ribbons to enhance beauty. Style: Vintage sepia-toned photography, soft diffused lighting. Background: Traditional Japanese interior. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Nostalgic, romantic, youthful prime."
+    prompt: "A Taisho Roman studio portrait. Preserve subject's identity and features. Subject in elegant 1920s Japanese attire (women: a well-structured pleated hakama skirt with a lace-collared blouse; men: formal kimono or gakuran). Pose: Subject facing directly forward towards the camera to ensure a symmetrical and solid silhouette. Props: The subject may be holding EITHER a vintage book OR a traditional folding fan (choose only one). Hair & Appearance: Youthful 'Haikara' style with flowing hair or ribbons. Style: Vintage sepia-toned photography, soft diffused studio lighting. Background: A rich East-meets-West interior featuring traditional shoji screens, dark wooden bookshelves, a vintage globe, a classic pendulum clock, and lush green potted ferns. Composition: Tight half-body, filling 85% of frame, 3:4 vertical. Mood: Nostalgic, romantic, intellectual elegance."
   },
   {
     name: "好萊塢默片 (Silent Glamour)",
@@ -64,7 +64,7 @@ const STYLES: StyleConfig[] = [
   {
     name: "臺灣風華年代 (Formosa Radiance)",
     nameEn: "Formosa Radiance",
-    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Composition: Tight half-body portrait, subject filling 85% of the frame, 3:4 vertical. Subject as a stylish urban figure. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Background: A quiet, humanistic 1970s streetscape featuring traditional arcades (Qilou) or clean sidewalks. Occasionally, soft blurry neon lights may appear in the distance. Extremely shallow depth of field with heavy bokeh. Ensure no legible text on signs. No other people or bystanders. Mood: Warm, Humanistic with a touch of nostalgia."
+    prompt: "A 1970s Taiwan cinematic portrait. Preserve subject's identity and features. Composition: Tight half-body portrait, subject MUST fill 85% of the frame, 3:4 vertical. Style: Vintage film aesthetic, warm Kodak tones, soft grain. Attire: 1970s retro fashion (patterned shirts, flared pants). Hair: Natural and airy 1970s hairstyles (women: soft natural waves or a light middle part with a breezy, effortless feel; men: clean and natural side-part or slightly layered hair, avoiding excessive volume). Accessories: The subject may naturally carry a vintage brown leather handbag or shoulder satchel, and wear a classic analog wristwatch. Background: A diverse 1970s Taiwan streetscape, ranging from traditional arcades (Qilou) with stone arches to narrow alleys with nostalgic shop signs or blurred neon lights. The scene may naturally include period-accurate elements like parked vintage scooters or motorcycles in the background. Extremely shallow depth of field with heavy bokeh to keep focus on the subject. Ensure no legible text on signs. No other people or bystanders. Mood: Warm, nostalgic, and humanistic."
   },
   {
     name: "當代時尚 (Contemporary Fashion)",
@@ -102,8 +102,8 @@ export default function App() {
   const [subjectType, setSubjectType] = useState<'human' | 'pet'>('human');
   const [gender, setGender] = useState<'male' | 'female'>('female');
   const [additionalDesc, setAdditionalDesc] = useState('');
-  const [generationMode, setGenerationMode] = useState<'quick' | 'full'>('full');
-  const [selectedStyleIds, setSelectedStyleIds] = useState<string[]>(STYLES.map(s => s.nameEn));
+  const [generationMode, setGenerationMode] = useState<'quick' | 'full'>('quick');
+  const [selectedStyleIds, setSelectedStyleIds] = useState<string[]>([]);
   const [refiningPortraitId, setRefiningPortraitId] = useState<string | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [refinementPrompt, setRefinementPrompt] = useState('');
@@ -114,20 +114,22 @@ export default function App() {
   const [coolingTime, setCoolingTime] = useState(0);
   const [isChangingKey, setIsChangingKey] = useState(false);
   const [statusText, setStatusText] = useState('');
+  const [selectionError, setSelectionError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const activeGenerationIdRef = useRef<number>(0);
+  const crawlIntervalRef = useRef<any>(null);
 
   const translateError = (msg: string) => {
-    if (!msg) return "生成失敗";
+    if (!msg) return "顯影失敗";
     const lowerMsg = msg.toLowerCase();
-    if (lowerMsg.includes("503") || lowerMsg.includes("unavailable")) return "時光機暫時繁忙，請稍後再試一次";
-    if (lowerMsg.includes("429") || lowerMsg.includes("resource_exhausted")) return "請求過於頻繁，請稍候片刻";
-    if (lowerMsg.includes("401") || lowerMsg.includes("api_key_invalid")) return "API 金鑰無效，請檢查設定";
-    if (lowerMsg.includes("safety")) return "由於安全過濾機制，無法生成此內容";
-    if (lowerMsg.includes("load failed")) return "圖片傳輸失敗，請檢查網路連線";
-    return "生成過程中發生細微偏差，請重試";
+    if (lowerMsg.includes("503") || lowerMsg.includes("unavailable")) return "時光機暫時繁忙，請稍後再次啟動";
+    if (lowerMsg.includes("429") || lowerMsg.includes("resource_exhausted")) return "時光機能量耗盡 (API 額度已達上限)";
+    if (lowerMsg.includes("401") || lowerMsg.includes("api_key_invalid")) return "時光通行證失效，請重新驗證金鑰";
+    if (lowerMsg.includes("safety")) return "此影像超出了時光機的安全顯影範圍";
+    if (lowerMsg.includes("load failed")) return "時光訊號不穩定，影像傳輸中斷";
+    return "時光流轉中發生了不可預期的擾動";
   };
 
   // --- Helper: Base64 to Blob URL ---
@@ -279,7 +281,8 @@ export default function App() {
     }
 
     let completedCount = 0;
-    let crawlInterval: any;
+    
+    if (crawlIntervalRef.current) clearInterval(crawlIntervalRef.current);
     console.log("Starting generation for styles:", stylesToGenerate.map(s => s.nameEn));
 
     try {
@@ -287,7 +290,7 @@ export default function App() {
       const modelName = "gemini-3.1-flash-image-preview";
 
       // Start a crawling progress interval for initial generation
-      crawlInterval = setInterval(() => {
+      crawlIntervalRef.current = setInterval(() => {
         setProgress(prev => {
           const nextMilestone = ((completedCount + 1) / totalStyles) * 100;
           if (prev < nextMilestone - 1) {
@@ -344,9 +347,23 @@ export default function App() {
               ? `Preserve original species and facial features of the pet. Do not humanize the face. The pet is ${gender}.` 
               : `Preserve subject's identity, features, and original gender (${gender}). Maintain original age and body type.`;
 
+            // Text/Typography Logic
+            let textRequirement = "";
+            if (subjectType === 'human') {
+              textRequirement = "Strictly no typography, overlay text, logos, or watermarks. Ensure no legible text on signs or backgrounds. Text on small handheld objects like books is allowed.";
+            } else {
+              if (style.nameEn === 'Contemporary Fashion') {
+                // Allow natural randomness for pet fashion
+                textRequirement = ""; 
+              } else {
+                textRequirement = "Strictly no typography, overlay text, or logos on the image.";
+              }
+            }
+
             const promptText = `Transform this ${subjectTypeStr} into a ${style.nameEn}. ${style.prompt} 
             ${additionalDesc ? `User request: ${additionalDesc}` : ''}
             Requirements: ${identityRequirement}
+            ${textRequirement}
             ${subjectType === 'pet' ? `The pet should be wearing the elegant historical or fashion attire appropriate for a ${gender} of that era, but keep its animal head and face.` : ''}
             ${isHistorical ? `Historical accuracy: No modern technology.` : ''}
             High-resolution photorealistic portrait, 3:4 ratio.`;
@@ -417,9 +434,11 @@ export default function App() {
         const targetProgress = (completedCount / totalStyles) * 100;
         
         if (completedCount < totalStyles) {
-          setStatusText('準備切換下一個風格...');
+          setStatusText('準備穿越至下一個時空節點...');
         } else {
-          setStatusText('時光肖像生成完成！');
+          setStatusText('時光旅程圓滿達成，您的時光肖像已完美定格。');
+          // Wait for 3 seconds so user can read the final message
+          await new Promise(resolve => setTimeout(resolve, 3000));
         }
 
         // Smoothly animate to the next progress point
@@ -439,7 +458,10 @@ export default function App() {
       }
     } finally {
       if (generationId === activeGenerationIdRef.current) {
-        if (crawlInterval) clearInterval(crawlInterval);
+        if (crawlIntervalRef.current) {
+          clearInterval(crawlIntervalRef.current);
+          crawlIntervalRef.current = null;
+        }
         setIsGenerating(false);
         setCoolingTime(0);
       }
@@ -612,9 +634,23 @@ export default function App() {
         ? `Preserve original species and facial features of the pet. Do not humanize the face. The pet is ${gender}.` 
         : `Preserve subject's identity, features, and original gender (${gender}). Maintain original age and body type.`;
 
+      // Text/Typography Logic
+      let textRequirement = "";
+      if (subjectType === 'human') {
+        textRequirement = "Strictly no typography, overlay text, logos, or watermarks. Ensure no legible text on signs or backgrounds. Text on small handheld objects like books is allowed.";
+      } else {
+        if (style.nameEn === 'Contemporary Fashion') {
+          // Allow natural randomness for pet fashion
+          textRequirement = "";
+        } else {
+          textRequirement = "Strictly no typography, overlay text, or logos.";
+        }
+      }
+
       const promptText = `Transform this ${subjectTypeStr} into a ${style.nameEn}. ${style.prompt} 
       ${additionalDesc ? `User request: ${additionalDesc}` : ''}
       Requirements: ${identityRequirement}
+      ${textRequirement}
       ${subjectType === 'pet' ? `The pet should be wearing the elegant historical or fashion attire appropriate for a ${gender} of that era, but keep its animal head and face.` : ''}
       ${isHistorical ? `Historical accuracy: No modern technology.` : ''}
       High-resolution photorealistic portrait, 3:4 ratio.`;
@@ -922,7 +958,9 @@ export default function App() {
                 </div>
                 <div className="w-full sm:w-64">
                   <div className="flex items-center justify-between mb-3">
-                    <label className="block text-sm font-display font-bold text-dark-green">選擇風格</label>
+                    <label className="block text-sm font-display font-bold text-dark-green">
+                      <span className="mr-1.5">✦</span>選擇時空節點
+                    </label>
                     <span className="text-[10px] text-antique-gold font-inter font-bold">
                       {generationMode === 'quick' ? `已選 ${selectedStyleIds.length}/3` : `已選 ${selectedStyleIds.length}/6`}
                     </span>
@@ -940,11 +978,12 @@ export default function App() {
                             className="hidden" 
                             checked={isSelected} 
                             onChange={() => {
+                              setSelectionError(null);
                               if (isSelected) {
                                 setSelectedStyleIds(selectedStyleIds.filter(id => id !== style.nameEn));
                               } else {
                                 if (generationMode === 'quick' && selectedStyleIds.length >= 3) {
-                                  alert("快速版最多只能選擇 3 個風格，如需更多請切換至完整版。");
+                                  setSelectionError("快速模式僅限選取 3 個時空節點");
                                   return;
                                 }
                                 setSelectedStyleIds([...selectedStyleIds, style.nameEn]);
@@ -956,39 +995,34 @@ export default function App() {
                       );
                     })}
                   </div>
+                  {selectionError && (
+                    <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-[10px] text-red-500 font-bold mt-1 text-right">
+                      {selectionError}
+                    </motion.p>
+                  )}
                 </div>
               </div>
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".jpg,.jpeg,.png,.webp" className="hidden" />
               <div className="mt-1 space-y-1.5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">對象類型</label>
-                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl gap-1">
-                      <button onClick={() => setSubjectType('human')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${subjectType === 'human' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>人類</button>
-                      <button onClick={() => setSubjectType('pet')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${subjectType === 'pet' ? 'bg-antique-gold text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>寵物</button>
-                    </div>
-                  </div>
-                  <div><label className="block text-xs font-display font-bold text-dark-green mb-1">指定性別</label>
-                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl gap-1">
-                      <button onClick={() => setGender('male')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>{subjectType === 'pet' ? '公' : '男性'}</button>
-                      <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>{subjectType === 'pet' ? '母' : '女性'}</button>
-                    </div>
-                  </div>
-                </div>
                 <div className="mt-1.5">
-                  <label className="block text-xs font-display font-bold text-dark-green mb-1">選擇模式</label>
+                  <label className="block text-xs font-display font-bold text-dark-green mb-1">
+                    <span className="mr-1.5">✦</span>選擇顯影模式
+                  </label>
                   <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl">
                     <button 
                       onClick={() => {
                         setGenerationMode('quick');
-                        setSelectedStyleIds(STYLES.slice(0, 3).map(s => s.nameEn));
+                        setSelectionError(null);
+                        setSelectedStyleIds([]);
                       }} 
                       className={`flex-1 py-1 rounded-lg text-xs font-sans font-bold ${generationMode === 'quick' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
                     >
-                      快速版 (3張)
+                      快速版 (1~3張)
                     </button>
                     <button 
                       onClick={() => {
                         setGenerationMode('full');
+                        setSelectionError(null);
                         setSelectedStyleIds(STYLES.map(s => s.nameEn));
                       }} 
                       className={`flex-1 py-1 rounded-lg text-xs font-sans font-bold ${generationMode === 'full' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50'}`}
@@ -997,7 +1031,30 @@ export default function App() {
                     </button>
                   </div>
                 </div>
-                <div className="mt-1"><label className="block text-xs font-display font-bold text-dark-green mb-1">補充說明</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-display font-bold text-dark-green mb-1">
+                      <span className="mr-1.5">✦</span>顯影對象
+                    </label>
+                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl gap-1">
+                      <button onClick={() => setSubjectType('human')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${subjectType === 'human' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>人像</button>
+                      <button onClick={() => setSubjectType('pet')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${subjectType === 'pet' ? 'bg-antique-gold text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>寵物</button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-display font-bold text-dark-green mb-1">
+                      <span className="mr-1.5">✦</span>性別特徵
+                    </label>
+                    <div className="flex p-1 bg-ivory border border-antique-gold/10 rounded-xl gap-1">
+                      <button onClick={() => setGender('male')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'male' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>{subjectType === 'pet' ? '小紳士' : '紳士'}</button>
+                      <button onClick={() => setGender('female')} className={`flex-1 py-1 rounded-lg text-xs font-display font-bold transition-all ${gender === 'female' ? 'bg-dark-green text-white shadow-sm' : 'text-sepia/50 hover:bg-stone-100'}`}>{subjectType === 'pet' ? '小淑女' : '淑女'}</button>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-1">
+                  <label className="block text-xs font-display font-bold text-dark-green mb-1">
+                    <span className="mr-1.5">✦</span>時光備註
+                  </label>
                   <textarea value={additionalDesc} onChange={(e) => setAdditionalDesc(e.target.value)} placeholder="例如：保留眼鏡特徵、服裝以深色系為主⋯" className="w-full py-1.5 px-3 bg-ivory border border-antique-gold/20 rounded-xl text-sm h-12 text-stone-700 font-display font-bold" />
                 </div>
               </div>
@@ -1037,14 +1094,14 @@ export default function App() {
                     className="w-full h-10 rounded-xl font-display font-bold text-sepia/40 hover:text-sepia/80 border border-dashed border-sepia/20 hover:bg-sepia/5 transition-all flex items-center justify-center gap-2 text-[13px]"
                   >
                     <Key className="w-3 h-3" />
-                    <span>更換 API 金鑰 (Change API Key)</span>
+                    <span>更換能量金鑰 (Change API Key)</span>
                   </button>
                   <button 
                     onClick={handleClearApiKey}
                     className="w-full h-10 rounded-xl font-display font-bold text-red-800/20 hover:text-red-800/60 border border-dashed border-red-800/10 hover:bg-red-800/5 transition-all flex items-center justify-center gap-2 text-[11px]"
                   >
                     <Eraser className="w-3 h-3" />
-                    <span>清除金鑰並登出 (Clear & Logout)</span>
+                    <span>註銷金鑰並離開 (Clear & Logout)</span>
                   </button>
                 </div>
               )}
@@ -1109,14 +1166,16 @@ export default function App() {
                                 {translateError(portrait.errorMsg || "")}
                               </p>
                               <p className="mt-2 text-[10px] text-red-800/30 italic">
-                                請嘗試更換照片或調整說明
+                                {portrait.errorMsg?.toLowerCase().includes("429") || portrait.errorMsg?.toLowerCase().includes("resource_exhausted") 
+                                  ? "請更換能量金鑰以重啟時光機" 
+                                  : "建議調整顯影參數或更換底片"}
                               </p>
                               <button 
                                 onClick={(e) => { e.stopPropagation(); handleSingleRegenerate(portrait.id); }}
                                 className="mt-4 px-4 py-2 bg-white border border-red-200 text-red-600 rounded-xl text-xs font-display font-bold flex items-center gap-2 hover:bg-red-50 transition-all shadow-sm"
                               >
                                 <RefreshCw className="w-3 h-3" />
-                                重新生成
+                                重新顯影
                               </button>
                             </div>
                           ) : (
