@@ -965,7 +965,7 @@ export default function App() {
                       {generationMode === 'quick' ? `已選 ${selectedStyleIds.length}/3` : `已選 ${selectedStyleIds.length}/6`}
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 gap-2 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
+                  <div className="grid grid-cols-1 gap-3 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
                     {STYLES.map(style => {
                       const isSelected = selectedStyleIds.includes(style.nameEn);
                       return (
@@ -1004,7 +1004,7 @@ export default function App() {
               </div>
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".jpg,.jpeg,.png,.webp" className="hidden" />
               <div className="mt-1 space-y-1.5">
-                <div className="mt-1.5">
+                <div className="mt-6">
                   <label className="block text-xs font-display font-bold text-dark-green mb-1">
                     <span className="mr-1.5">✦</span>選擇顯影模式
                   </label>
@@ -1091,17 +1091,17 @@ export default function App() {
                 <div className="mt-4 space-y-2">
                   <button 
                     onClick={handleChangeApiKey} 
-                    className="w-full h-10 rounded-xl font-display font-bold text-sepia/40 hover:text-sepia/80 border border-dashed border-sepia/20 hover:bg-sepia/5 transition-all flex items-center justify-center gap-2 text-[13px]"
+                    className="w-full h-10 rounded-xl font-display font-bold text-sepia/40 hover:text-sepia/80 border border-dashed border-sepia/20 hover:bg-sepia/5 transition-all flex items-center justify-center gap-2 text-sm"
                   >
                     <Key className="w-3 h-3" />
                     <span>更換能量金鑰 (Change API Key)</span>
                   </button>
                   <button 
                     onClick={handleClearApiKey}
-                    className="w-full h-10 rounded-xl font-display font-bold text-red-800/20 hover:text-red-800/60 border border-dashed border-red-800/10 hover:bg-red-800/5 transition-all flex items-center justify-center gap-2 text-[11px]"
+                    className="w-full h-10 rounded-xl font-display font-bold text-red-800/20 hover:text-red-800/60 border border-dashed border-red-800/10 hover:bg-red-800/5 transition-all flex items-center justify-center gap-2 text-sm"
                   >
                     <Eraser className="w-3 h-3" />
-                    <span>註銷金鑰並離開 (Clear & Logout)</span>
+                    <span>註銷金鑰並離開 (Clear <span className="font-inter mx-0.5">&</span> Logout)</span>
                   </button>
                 </div>
               )}
